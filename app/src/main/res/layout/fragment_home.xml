@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".HomeFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="welcome to bakewise!"
+        android:textSize="24sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="your sourdough baking assistant :)"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/plan_a_loaf_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Plan a loaf!" />
+
+    <Button
+        android:id="@+id/explore_recipes_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Explore recipes" />
+
+    <Button
+        android:id="@+id/community_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Community" />
+
+    <Button
+        android:id="@+id/past_loafs_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Past loafs" />
+
+</LinearLayout>
