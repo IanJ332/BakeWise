@@ -6,18 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.bakewise.databinding.FragmentStepCompleteBinding
+import com.example.bakewise.databinding.FragmentBakeCompleteBinding
 
-class StepCompleteFragment : Fragment() {
+class BakeCompleteFragment : Fragment() {
 
-    private var _binding: FragmentStepCompleteBinding? = null
+    private var _binding: FragmentBakeCompleteBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentStepCompleteBinding.inflate(inflater, container, false)
+        _binding = FragmentBakeCompleteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -25,14 +25,14 @@ class StepCompleteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recipeId = arguments?.getInt("recipeId") ?: -1
-        val stepIndex = arguments?.getInt("stepIndex") ?: -1
+        val recipe = MOCK_RECIPES.find { it.id == recipeId }
 
-        binding.startEvaluationButton.setOnClickListener {
-            val bundle = Bundle().apply {
-                putInt("recipeId", recipeId)
-                putInt("stepIndex", stepIndex)
-            }
-            findNavController().navigate(R.id.action_stepCompleteFragment_to_feedbackFragment, bundle)
+        if (recipe != null) {
+            binding.summaryText.text = "You have successfully baked your ${recipe.name}!"
+        }
+
+        binding.returnHomeButton.setOnClickListener {
+            findNavController().navigate(R.id.action_bakeCompleteFragment_to_homeFragment)
         }
     }
 

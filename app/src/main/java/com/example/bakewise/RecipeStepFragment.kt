@@ -38,7 +38,11 @@ class RecipeStepFragment : Fragment() {
         }
 
         binding.doneButton.setOnClickListener {
-            findNavController().navigate(R.id.action_recipeStepFragment_to_stepWaitingFragment)
+            val bundle = Bundle().apply {
+                putInt("recipeId", recipeId)
+                putInt("stepIndex", stepIndex)
+            }
+            findNavController().navigate(R.id.action_recipeStepFragment_to_stepWaitingFragment, bundle)
         }
     }
 
