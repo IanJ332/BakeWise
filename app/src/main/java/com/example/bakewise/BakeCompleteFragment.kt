@@ -24,12 +24,7 @@ class BakeCompleteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recipeId = arguments?.getInt("recipeId") ?: -1
-        val recipe = MOCK_RECIPES.find { it.id == recipeId }
-
-        if (recipe != null) {
-            binding.summaryText.text = "You have successfully baked your ${recipe.name}!"
-        }
+        binding.summaryText.text = "You have successfully baked your Classic Sourdough!"
 
         binding.returnHomeButton.setOnClickListener {
             findNavController().navigate(R.id.action_bakeCompleteFragment_to_homeFragment)

@@ -9,6 +9,7 @@
     tools:context=".StepWaitingFragment">
 
     <TextView
+        android:id="@+id/message_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -17,10 +18,10 @@
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/set_notification_button"
+        android:id="@+id/set_reminders_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Set Notification (Recommended)" />
+        android:text="Set Reminders" />
 
     <Button
         android:id="@+id/add_to_calendar_button"

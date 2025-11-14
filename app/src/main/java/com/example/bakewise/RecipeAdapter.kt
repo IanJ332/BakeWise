@@ -9,9 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class RecipeAdapter(
     private val recipes: List<Recipe>,
-    private val onItemClick: (Recipe, String) -> Unit,
-    private val onDetailsClick: (Recipe) -> Unit,
-    private val source: String
+    private val onItemClick: (Recipe) -> Unit,
+    private val onDetailsClick: (Recipe) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
@@ -36,7 +35,7 @@ class RecipeAdapter(
             timeTextView.text = recipe.totalTime
 
             itemView.setOnClickListener {
-                onItemClick(recipe, source)
+                onItemClick(recipe)
             }
 
             detailsButton.setOnClickListener {

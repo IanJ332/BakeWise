@@ -24,15 +24,19 @@ class StepCompleteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recipeId = arguments?.getInt("recipeId") ?: -1
         val stepIndex = arguments?.getInt("stepIndex") ?: -1
 
         binding.startEvaluationButton.setOnClickListener {
-            val bundle = Bundle().apply {
-                putInt("recipeId", recipeId)
-                putInt("stepIndex", stepIndex)
+            if (stepIndex == 2) {
+                // It's the FINAL step (Bake). Skip feedback and go to the end.
+                findNavController().navigate(R.id.action_stepCompleteFragment_to_bakeCompleteFragment)
+            } else {
+                // It's Step 0 or 1. Proceed to feedback.
+                val bundle = Bundle().apply {
+                    putInt("stepIndex", stepIndex)
+                }
+                findNavController().navigate(R.id.action_stepCompleteFragment_to_feedbackFragment, bundle)
             }
-            findNavController().navigate(R.id.action_stepCompleteFragment_to_feedbackFragment, bundle)
         }
     }
 

@@ -5,6 +5,11 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <action
+        android:id="@+id/action_global_homeFragment"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/nav_graph" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.bakewise.HomeFragment"
@@ -29,9 +34,6 @@
         <action
             android:id="@+id/action_planALoafFragment_to_scheduleFragment"
             app:destination="@id/scheduleFragment" />
-        <action
-            android:id="@+id/action_planALoafFragment_to_newPickRecipeFragment"
-            app:destination="@id/newPickRecipeFragment" />
     </fragment>
 
     <fragment
@@ -60,8 +62,7 @@
     <fragment
         android:id="@+id/recipeDetailFragment"
         android:name="com.example.bakewise.RecipeDetailFragment"
-        android:label="fragment_recipe_detail"
-        tools:layout="@layout/fragment_recipe_detail">
+        android:label="fragment_recipe_detail">
         <argument
             android:name="recipeId"
             app:argType="integer" />
@@ -80,11 +81,8 @@
     <fragment
         android:id="@+id/recipeStepFragment"
         android:name="com.example.bakewise.RecipeStepFragment"
-        android_label="fragment_recipe_step"
+        android:label="fragment_recipe_step"
         tools:layout="@layout/fragment_recipe_step">
-        <argument
-            android:name="recipeId"
-            app:argType="integer" />
         <argument
             android:name="stepIndex"
             app:argType="integer" />
@@ -99,9 +97,6 @@
         android:label="fragment_step_waiting"
         tools:layout="@layout/fragment_step_waiting">
         <argument
-            android:name="recipeId"
-            app:argType="integer" />
-        <argument
             android:name="stepIndex"
             app:argType="integer" />
         <action
@@ -115,14 +110,14 @@
         android:label="fragment_step_complete"
         tools:layout="@layout/fragment_step_complete">
         <argument
-            android:name="recipeId"
-            app:argType="integer" />
-        <argument
             android:name="stepIndex"
             app:argType="integer" />
         <action
             android:id="@+id/action_stepCompleteFragment_to_feedbackFragment"
             app:destination="@id/feedbackFragment" />
+        <action
+            android:id="@+id/action_stepCompleteFragment_to_bakeCompleteFragment"
+            app:destination="@id/bakeCompleteFragment" />
     </fragment>
 
     <fragment
@@ -131,14 +126,14 @@
         android:label="fragment_feedback"
         tools:layout="@layout/fragment_feedback">
         <argument
-            android:name="recipeId"
-            app:argType="integer" />
-        <argument
             android:name="stepIndex"
             app:argType="integer" />
         <action
             android:id="@+id/action_feedbackFragment_to_bakeCompleteFragment"
             app:destination="@id/bakeCompleteFragment" />
+        <action
+            android:id="@+id/action_feedbackFragment_to_recipeStepFragment"
+            app:destination="@id/recipeStepFragment" />
     </fragment>
 
     <fragment
@@ -146,9 +141,6 @@
         android:name="com.example.bakewise.BakeCompleteFragment"
         android:label="fragment_bake_complete"
         tools:layout="@layout/fragment_bake_complete">
-        <argument
-            android:name="recipeId"
-            app:argType="integer" />
         <action
             android:id="@+id/action_bakeCompleteFragment_to_homeFragment"
             app:destination="@id/homeFragment"

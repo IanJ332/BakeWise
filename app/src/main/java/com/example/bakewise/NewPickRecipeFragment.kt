@@ -15,13 +15,6 @@ class NewPickRecipeFragment : Fragment() {
     private var _binding: FragmentNewPickRecipeBinding? = null
     private val binding get() = _binding!!
 
-    private var source: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        source = arguments?.getString("source")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,20 +28,11 @@ class NewPickRecipeFragment : Fragment() {
 
         val recipeAdapter = RecipeAdapter(
             MOCK_RECIPES,
-            onItemClick = { recipe, source ->
-                if (source == "PlanALoaf") {
-                    val bundle = Bundle().apply {
-                        putInt("recipeId", recipe.id)
-                    }
-                    findNavController().previousBackStackEntry?.savedStateHandle?.set("selectedRecipeId", recipe.id)
-                    findNavController().popBackStack()
-                } else {
-                    val bundle = Bundle().apply {
-                        putInt("recipeId", recipe.id)
-                        putInt("stepIndex", 0)
-                    }
-                    findNavController().navigate(R.id.action_newPickRecipeFragment_to_recipeStepFragment, bundle)
+            onItemClick = { recipe ->
+                val bundle = Bundle().apply {
+                    putInt("stepIndex", 0)
                 }
+                findNavController().navigate(R.id.action_newPickRecipeFragment_to_recipeStepFragment, bundle)
             },
             onDetailsClick = { recipe ->
                 AlertDialog.Builder(requireContext())
@@ -56,8 +40,7 @@ class NewPickRecipeFragment : Fragment() {
                     .setMessage("Total: ${recipe.totalTime}\nActive Time: 1h\nWaiting: 29h")
                     .setPositiveButton("OK", null)
                     .show()
-            },
-            source = source ?: ""
+            }
         )
 
         binding.recipeRecyclerView.apply {

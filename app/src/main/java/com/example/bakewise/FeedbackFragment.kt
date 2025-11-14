@@ -24,24 +24,30 @@ class FeedbackFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recipeId = arguments?.getInt("recipeId") ?: -1
         val stepIndex = arguments?.getInt("stepIndex") ?: -1
 
-        binding.completeStepButton.setOnClickListener {
-            val recipe = MOCK_RECIPES.find { it.id == recipeId }
-            val nextStepIndex = stepIndex + 1
+        when (stepIndex) {
+            0 -> {
+                binding.notReadyDescription.text = "Dough still looks dense, hasn\'t risen much, and feels tight."
+                binding.readyDescription.text = "Dough has risen, feels soft, and is full of air. You should see some bubbles on the surface."
+            }
+            1 -> {
+                binding.notReadyTitle.text = "Under-proofed"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "If you poke the dough, the hole springs back very quickly."
+                binding.readyDescription.text = "If you poke the dough, the indentation slowly springs back, but not completely."
+            }
+        }
 
-            if (recipe != null && nextStepIndex < recipe.schedule.size) {
+        binding.completeStepButton.setOnClickListener {
+            val nextStepIndex = stepIndex + 1
+            if (nextStepIndex < 3) {
                 val bundle = Bundle().apply {
-                    putInt("recipeId", recipeId)
                     putInt("stepIndex", nextStepIndex)
                 }
-                findNavController().navigate(R.id.recipeStepFragment, bundle)
+                findNavController().navigate(R.id.action_feedbackFragment_to_recipeStepFragment, bundle)
             } else {
-                val bundle = Bundle().apply {
-                    putInt("recipeId", recipeId)
-                }
-                findNavController().navigate(R.id.action_feedbackFragment_to_bakeCompleteFragment, bundle)
+                findNavController().navigate(R.id.action_feedbackFragment_to_bakeCompleteFragment)
             }
         }
     }
