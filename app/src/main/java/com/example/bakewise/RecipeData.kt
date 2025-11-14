@@ -51,5 +51,30 @@ val MOCK_RECIPES = listOf(
             BakeStep("Shape & Proof", 4),
             BakeStep("Bake", 1)
         )
+    ),
+    Recipe(
+        id = 4,
+        name = "Whole Wheat Sourdough",
+        totalTime = "32h",
+        schedule = listOf(
+            BakeStep("Feed starter", 30),
+            BakeStep("Autolyse", 24),
+            BakeStep("Mix Dough", 23),
+            BakeStep("Bulk Ferment", 22),
+            BakeStep("Shape & Proof", 6),
+            BakeStep("Bake", 1)
+        )
+    ),
+    Recipe(
+        id = 5,
+        name = "Rye Sourdough",
+        totalTime = "48h",
+        schedule = listOf(
+            BakeStep("Feed starter", 46),
+            BakeStep("Mix Dough", 40),
+            BakeStep("Bulk Ferment", 39),
+            BakeStep("Shape & Proof", 12),
+            BakeStep("Bake", 1)
+        )
     )
 )

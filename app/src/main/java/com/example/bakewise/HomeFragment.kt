@@ -25,6 +25,10 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.planALoafButton.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_planALoafFragment)
+        }
+
+        binding.bakeNowButton.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_newPickRecipeFragment)
         }
 

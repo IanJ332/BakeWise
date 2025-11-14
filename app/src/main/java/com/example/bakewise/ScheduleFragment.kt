@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.bakewise.databinding.FragmentScheduleBinding
 
@@ -34,6 +35,10 @@ class ScheduleFragment : Fragment() {
             textView.text = step
             textView.textSize = 16f
             binding.scheduleStepsLayout.addView(textView)
+        }
+
+        binding.setRemindersButton.setOnClickListener {
+            Toast.makeText(requireContext(), "Reminders set!", Toast.LENGTH_SHORT).show()
         }
     }
 
