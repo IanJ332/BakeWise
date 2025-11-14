@@ -43,6 +43,14 @@ class StepWaitingFragment : Fragment() {
 
         val stepIndex = arguments?.getInt("stepIndex") ?: -1
 
+        binding.bakingNavBar.navViewStepsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_global_stepListDialogFragment)
+        }
+
+        binding.bakingNavBar.navBackButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         when (stepIndex) {
             0 -> binding.messageTextView.text = "Great! Your dough is now resting. This first rest period is about 4 hours. Set a reminder!"
             1 -> binding.messageTextView.text = "Perfect shape! Cover the dough and place it in the refrigerator for its long cold proof. This will be 8-12 hours. Set a reminder for tomorrow!"

@@ -10,6 +10,10 @@
         app:destination="@id/homeFragment"
         app:popUpTo="@id/nav_graph" />
 
+    <action
+        android:id="@+id/action_global_stepListDialogFragment"
+        app:destination="@id/stepListDialogFragment" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.bakewise.HomeFragment"
@@ -81,8 +85,7 @@
     <fragment
         android:id="@+id/recipeStepFragment"
         android:name="com.example.bakewise.RecipeStepFragment"
-        android:label="fragment_recipe_step"
-        tools:layout="@layout/fragment_recipe_step">
+        android:label="fragment_recipe_step">
         <argument
             android:name="stepIndex"
             app:argType="integer" />
@@ -94,8 +97,7 @@
     <fragment
         android:id="@+id/stepWaitingFragment"
         android:name="com.example.bakewise.StepWaitingFragment"
-        android:label="fragment_step_waiting"
-        tools:layout="@layout/fragment_step_waiting">
+        android:label="fragment_step_waiting">
         <argument
             android:name="stepIndex"
             app:argType="integer" />
@@ -107,8 +109,7 @@
     <fragment
         android:id="@+id/stepCompleteFragment"
         android:name="com.example.bakewise.StepCompleteFragment"
-        android:label="fragment_step_complete"
-        tools:layout="@layout/fragment_step_complete">
+        android:label="fragment_step_complete">
         <argument
             android:name="stepIndex"
             app:argType="integer" />
@@ -123,8 +124,7 @@
     <fragment
         android:id="@+id/feedbackFragment"
         android:name="com.example.bakewise.FeedbackFragment"
-        android:label="fragment_feedback"
-        tools:layout="@layout/fragment_feedback">
+        android:label="fragment_feedback">
         <argument
             android:name="stepIndex"
             app:argType="integer" />
@@ -134,17 +134,25 @@
         <action
             android:id="@+id/action_feedbackFragment_to_recipeStepFragment"
             app:destination="@id/recipeStepFragment" />
+        <action
+            android:id="@+id/action_feedbackFragment_to_stepWaitingFragment"
+            app:destination="@id/stepWaitingFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/bakeCompleteFragment"
         android:name="com.example.bakewise.BakeCompleteFragment"
-        android:label="fragment_bake_complete"
-        tools:layout="@layout/fragment_bake_complete">
+        android:label="fragment_bake_complete">
         <action
             android:id="@+id/action_bakeCompleteFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/nav_graph" />
     </fragment>
+
+    <dialog
+        android:id="@+id/stepListDialogFragment"
+        android:name="com.example.bakewise.StepListDialogFragment"
+        android:label="dialog_step_list"
+        tools:layout="@layout/dialog_step_list" />
 
 </navigation>

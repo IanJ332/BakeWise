@@ -1,41 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".StepWaitingFragment">
 
-    <TextView
-        android:id="@+id/message_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="Great! Your dough is now resting for 6 hours."
-        android:textAlignment="center"
-        android:textSize="20sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/baking_nav_bar"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <Button
-        android:id="@+id/set_reminders_button"
+        <TextView
+            android:id="@+id/message_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="Great! Your dough is now resting for 6 hours."
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/set_reminders_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Set Reminders" />
+
+        <Button
+            android:id="@+id/add_to_calendar_button"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Add to Calendar" />
+
+        <Button
+            android:id="@+id/simulate_times_up_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Simulate Time's Up!" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/baking_nav_bar"
+        layout="@layout/layout_baking_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Set Reminders" />
+        android:layout_alignParentBottom="true" />
 
-    <Button
-        android:id="@+id/add_to_calendar_button"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Add to Calendar" />
-
-    <Button
-        android:id="@+id/simulate_times_up_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Simulate Time's Up!" />
-
-</LinearLayout>
+</RelativeLayout>

@@ -26,6 +26,17 @@ class FeedbackFragment : Fragment() {
 
         val stepIndex = arguments?.getInt("stepIndex") ?: -1
 
+        binding.bakingNavBar.navViewStepsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_global_stepListDialogFragment)
+        }
+
+        binding.bakingNavBar.navBackButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("stepIndex", stepIndex)
+            }
+            findNavController().navigate(R.id.action_feedbackFragment_to_stepWaitingFragment, bundle)
+        }
+
         when (stepIndex) {
             0 -> {
                 binding.notReadyDescription.text = "Dough still looks dense, hasn\'t risen much, and feels tight."

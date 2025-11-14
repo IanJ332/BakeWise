@@ -28,6 +28,14 @@ class RecipeStepFragment : Fragment() {
 
         stepIndex = arguments?.getInt("stepIndex") ?: -1
 
+        binding.bakingNavBar.navViewStepsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_global_stepListDialogFragment)
+        }
+
+        binding.bakingNavBar.navBackButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         when (stepIndex) {
             0 -> {
                 binding.stepTitleTextView.text = "Step 1: Mix & Develop Dough"

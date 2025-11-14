@@ -26,6 +26,14 @@ class StepCompleteFragment : Fragment() {
 
         val stepIndex = arguments?.getInt("stepIndex") ?: -1
 
+        binding.bakingNavBar.navViewStepsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_global_stepListDialogFragment)
+        }
+
+        binding.bakingNavBar.navBackButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         binding.startEvaluationButton.setOnClickListener {
             if (stepIndex == 2) {
                 // It's the FINAL step (Bake). Skip feedback and go to the end.
