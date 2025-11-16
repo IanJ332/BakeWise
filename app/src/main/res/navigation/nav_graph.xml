@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_planALoafFragment"
             app:destination="@id/planALoafFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_currentSchedulesFragment"
+            app:destination="@id/currentSchedulesFragment" />
     </fragment>
 
     <fragment
@@ -38,6 +41,9 @@
         <action
             android:id="@+id/action_planALoafFragment_to_scheduleFragment"
             app:destination="@id/scheduleFragment" />
+        <action
+            android:id="@+id/action_planALoafFragment_to_newPickRecipeFragment"
+            app:destination="@id/newPickRecipeFragment" />
     </fragment>
 
     <fragment
@@ -50,7 +56,18 @@
             app:argType="string" />
         <argument
             android:name="scheduleData"
+            app:argType="com.example.bakewise.BakeStep[]" />
+        <argument
+            android:name="scheduleName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="scheduleTimes"
             app:argType="string[]" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_recipeStepFragment"
+            app:destination="@id/recipeStepFragment" />
     </fragment>
 
     <fragment
@@ -154,5 +171,15 @@
         android:name="com.example.bakewise.StepListDialogFragment"
         android:label="dialog_step_list"
         tools:layout="@layout/dialog_step_list" />
+
+    <fragment
+        android:id="@+id/currentSchedulesFragment"
+        android:name="com.example.bakewise.CurrentSchedulesFragment"
+        android:label="fragment_current_schedules"
+        tools:layout="@layout/fragment_current_schedules">
+        <action
+            android:id="@+id/action_currentSchedulesFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
+    </fragment>
 
 </navigation>

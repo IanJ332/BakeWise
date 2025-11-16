@@ -32,6 +32,10 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_homeFragment_to_newPickRecipeFragment)
         }
 
+        binding.currentSchedulesButton.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_currentSchedulesFragment)
+        }
+
         binding.exploreRecipesButton.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_recipeListFragment)
         }

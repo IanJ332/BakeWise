@@ -15,6 +15,13 @@ class NewPickRecipeFragment : Fragment() {
     private var _binding: FragmentNewPickRecipeBinding? = null
     private val binding get() = _binding!!
 
+    private var source: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        source = arguments?.getString("source")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,19 +35,31 @@ class NewPickRecipeFragment : Fragment() {
 
         val recipeAdapter = RecipeAdapter(
             MOCK_RECIPES,
-            onItemClick = { recipe ->
-                val bundle = Bundle().apply {
-                    putInt("stepIndex", 0)
+            onItemClick = { recipe, source ->
+                if (source == "PlanALoaf") {
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set("selectedRecipeId", recipe.id)
+                    findNavController().popBackStack()
+                } else {
+                    val bundle = Bundle().apply {
+                        putInt("recipeId", recipe.id)
+                        putInt("stepIndex", 0)
+                    }
+                    findNavController().navigate(R.id.action_newPickRecipeFragment_to_recipeStepFragment, bundle)
                 }
-                findNavController().navigate(R.id.action_newPickRecipeFragment_to_recipeStepFragment, bundle)
             },
             onDetailsClick = { recipe ->
+                val stepNames = recipe.schedule.map { it.stepName }.toTypedArray()
                 AlertDialog.Builder(requireContext())
-                    .setTitle("Time Details (${recipe.name})")
-                    .setMessage("Total: ${recipe.totalTime}\nActive Time: 1h\nWaiting: 29h")
-                    .setPositiveButton("OK", null)
+                    .setTitle("Steps for ${recipe.name}")
+                    .setItems(stepNames) { _, which ->
+                        val selectedStep = recipe.schedule[which]
+                        StepDetailDialogFragment.newInstance(selectedStep.stepName, selectedStep.description)
+                            .show(childFragmentManager, "StepDetailDialog")
+                    }
+                    .setPositiveButton("Close", null)
                     .show()
-            }
+            },
+            source = source ?: ""
         )
 
         binding.recipeRecyclerView.apply {

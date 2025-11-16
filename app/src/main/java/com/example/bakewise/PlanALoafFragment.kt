@@ -7,12 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.bakewise.databinding.FragmentPlanALoafBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class PlanALoafFragment : Fragment() {
@@ -21,7 +22,11 @@ class PlanALoafFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var selectedRecipe: Recipe? = null
-    private val selectedDateTime = Calendar.getInstance()
+    private val readyCal: Calendar = Calendar.getInstance()
+    private val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
+    private var lastSchedule: List<ScheduleItem>? = null
+
+    data class ScheduleItem(val when_: Date, val bakeStep: BakeStep)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,96 +39,129 @@ class PlanALoafFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.selectRecipeEditText.setOnClickListener {
-            showRecipeSelectionDialog()
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>("selectedRecipeId")?.observe(viewLifecycleOwner) { recipeId ->
+            selectedRecipe = MOCK_RECIPES.find { it.id == recipeId }
+            binding.pickRecipeButton.text = "Recipe: ${selectedRecipe?.name}"
+            binding.selectedRecipeTextView.visibility = View.GONE
+            binding.whenToStartTextView.text = ""
+            binding.letsScheduleButton.isVisible = false
+            lastSchedule = null
         }
 
-        binding.requiredReadyTimeEditText.setOnClickListener {
-            showDateTimePicker()
+        binding.pickRecipeButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("source", "PlanALoaf")
+            }
+            findNavController().navigate(R.id.action_planALoafFragment_to_newPickRecipeFragment, bundle)
+        }
+
+        binding.pickReadyTimeButton.setOnClickListener {
+            if (selectedRecipe == null) {
+                Toast.makeText(requireContext(), "Please select a recipe first", Toast.LENGTH_SHORT).show()
+            } else {
+                showDateThenTime()
+            }
         }
 
         binding.clearButton.setOnClickListener {
-            clearSelections()
+            selectedRecipe = null
+            binding.pickRecipeButton.text = "Pick recipe"
+            binding.selectedRecipeTextView.visibility = View.VISIBLE
+            readyCal.timeInMillis = System.currentTimeMillis()
+            binding.readyTimeEditText.setText("")
+            binding.whenToStartTextView.text = ""
+            binding.letsScheduleButton.isVisible = false
+            lastSchedule = null
+            Toast.makeText(requireContext(), "Cleared", Toast.LENGTH_SHORT).show()
         }
 
         binding.calculateScheduleButton.setOnClickListener {
-            calculateSchedule()
-        }
-    }
-
-    private fun showRecipeSelectionDialog() {
-        val recipeNames = MOCK_RECIPES.map { it.name }.toTypedArray()
-        AlertDialog.Builder(requireContext())
-            .setTitle("Select a Recipe")
-            .setItems(recipeNames) { _, which ->
-                selectedRecipe = MOCK_RECIPES[which]
-                binding.selectRecipeEditText.setText(selectedRecipe?.name)
+            if (selectedRecipe == null) {
+                Toast.makeText(requireContext(), "Pick a recipe first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            .show()
+            if (binding.readyTimeEditText.text.toString().trim().isEmpty()) {
+                Toast.makeText(requireContext(), "Pick a ready time", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val readyDate = Date(readyCal.timeInMillis)
+            val calculatedSchedule = selectedRecipe!!.schedule.map {
+                val stepTime = Calendar.getInstance()
+                stepTime.time = readyDate
+                stepTime.add(Calendar.HOUR, -it.hoursBeforeReady)
+                ScheduleItem(stepTime.time, it)
+            }.sortedBy { it.when_ }
+
+            lastSchedule = calculatedSchedule
+
+            if (lastSchedule!!.isNotEmpty()) {
+                val first = lastSchedule!!.first()
+                binding.whenToStartTextView.text = "Start: ${fmt.format(first.when_)} — ${first.bakeStep.stepName}"
+                binding.letsScheduleButton.isVisible = true
+            } else {
+                binding.whenToStartTextView.text = ""
+                binding.letsScheduleButton.isVisible = false
+            }
+        }
+
+        binding.letsScheduleButton.setOnClickListener {
+            if (selectedRecipe == null || lastSchedule == null) return@setOnClickListener
+
+            val scheduleSteps = lastSchedule!!.map { it.bakeStep }.toTypedArray()
+            val scheduleTimes = lastSchedule!!.map { fmt.format(it.when_) }.toTypedArray()
+
+            val bundle = Bundle().apply {
+                putString("recipeName", selectedRecipe!!.name)
+                putParcelableArray("scheduleData", scheduleSteps)
+                putStringArray("scheduleTimes", scheduleTimes)
+            }
+            findNavController().navigate(R.id.action_planALoafFragment_to_scheduleFragment, bundle)
+        }
+
+        binding.readyTimeEditText.setText("")
     }
 
-    private fun showDateTimePicker() {
-        val currentDateTime = Calendar.getInstance()
+    private fun showDateThenTime() {
+        val totalHours = selectedRecipe!!.schedule.maxOfOrNull { it.hoursBeforeReady } ?: 0
+        val minReadyCal = Calendar.getInstance()
+        minReadyCal.add(Calendar.HOUR_OF_DAY, totalHours)
+
+        val currentCalendar = Calendar.getInstance()
+
         DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
-                selectedDateTime.set(Calendar.YEAR, year)
-                selectedDateTime.set(Calendar.MONTH, month)
-                selectedDateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                TimePickerDialog(
-                    requireContext(),
-                    { _, hourOfDay, minute ->
-                        selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                        selectedDateTime.set(Calendar.MINUTE, minute)
-                        updateDateTimeEditText()
-                    },
-                    currentDateTime.get(Calendar.HOUR_OF_DAY),
-                    currentDateTime.get(Calendar.MINUTE),
-                    false
-                ).show()
+                readyCal.set(Calendar.YEAR, year)
+                readyCal.set(Calendar.MONTH, month)
+                readyCal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                showTimePicker(minReadyCal)
             },
-            currentDateTime.get(Calendar.YEAR),
-            currentDateTime.get(Calendar.MONTH),
-            currentDateTime.get(Calendar.DAY_OF_MONTH)
-        ).show()
+            currentCalendar.get(Calendar.YEAR),
+            currentCalendar.get(Calendar.MONTH),
+            currentCalendar.get(Calendar.DAY_OF_MONTH)
+        ).apply {
+            datePicker.minDate = minReadyCal.timeInMillis
+            show()
+        }
     }
 
-    private fun updateDateTimeEditText() {
-        val sdf = SimpleDateFormat("MMMM d, yyyy h:mm a", Locale.getDefault())
-        binding.requiredReadyTimeEditText.setText(sdf.format(selectedDateTime.time))
-    }
+    private fun showTimePicker(minReadyCal: Calendar) {
+        val hour = readyCal.get(Calendar.HOUR_OF_DAY)
+        val min = readyCal.get(Calendar.MINUTE)
+        TimePickerDialog(requireContext(), { _, hourOfDay, minute ->
+            readyCal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            readyCal.set(Calendar.MINUTE, minute)
+            readyCal.set(Calendar.SECOND, 0)
+            readyCal.set(Calendar.MILLISECOND, 0)
 
-    private fun clearSelections() {
-        selectedRecipe = null
-        binding.selectRecipeEditText.text = null
-        binding.requiredReadyTimeEditText.text = null
-    }
-
-    private fun calculateSchedule() {
-        if (selectedRecipe == null) {
-            Toast.makeText(requireContext(), "Please select a recipe first.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (binding.requiredReadyTimeEditText.text.isNullOrEmpty()) {
-            Toast.makeText(requireContext(), "Please select a ready time.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val scheduleSteps = mutableListOf<String>()
-        val sdf = SimpleDateFormat("MMMM d, yyyy h:mm a", Locale.getDefault())
-
-        selectedRecipe!!.schedule.forEach { step ->
-            val stepTime = selectedDateTime.clone() as Calendar
-            stepTime.add(Calendar.HOUR_OF_DAY, -step.hoursBeforeReady)
-            scheduleSteps.add("${step.stepName}: ${sdf.format(stepTime.time)}")
-        }
-
-        val bundle = Bundle().apply {
-            putString("recipeName", selectedRecipe!!.name)
-            putStringArray("scheduleData", scheduleSteps.toTypedArray())
-        }
-        findNavController().navigate(R.id.action_planALoafFragment_to_scheduleFragment, bundle)
+            if (readyCal.timeInMillis < minReadyCal.timeInMillis) {
+                Toast.makeText(requireContext(), "Selected time is not feasible for this recipe. Please pick a later time.", Toast.LENGTH_LONG).show()
+                binding.readyTimeEditText.setText("")
+            } else {
+                binding.readyTimeEditText.setText(fmt.format(readyCal.time))
+            }
+        }, hour, min, false).show()
     }
 
     override fun onDestroyView() {

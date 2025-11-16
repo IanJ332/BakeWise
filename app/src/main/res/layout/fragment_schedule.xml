@@ -28,11 +28,18 @@
         android:layout_marginTop="16dp"
         android:orientation="vertical" />
 
-    <Button
-        android:id="@+id/set_reminders_button"
+    <EditText
+        android:id="@+id/schedule_name_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Set Reminders" />
+        android:hint="Schedule Name" />
+
+    <Button
+        android:id="@+id/save_schedule_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Save Schedule" />
 
 </LinearLayout>
