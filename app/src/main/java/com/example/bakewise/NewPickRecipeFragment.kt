@@ -33,18 +33,34 @@ class NewPickRecipeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Set the title based on the source
+        binding.titleTextView.text = when (source) {
+            "ExploreRecipes" -> "Explore Recipes"
+            else -> "Pick your recipe"
+        }
+
         val recipeAdapter = RecipeAdapter(
             MOCK_RECIPES,
             onItemClick = { recipe, source ->
-                if (source == "PlanALoaf") {
-                    findNavController().previousBackStackEntry?.savedStateHandle?.set("selectedRecipeId", recipe.id)
-                    findNavController().popBackStack()
-                } else {
-                    val bundle = Bundle().apply {
-                        putInt("recipeId", recipe.id)
-                        putInt("stepIndex", 0)
+                when (source) {
+                    "PlanALoaf" -> {
+                        findNavController().previousBackStackEntry?.savedStateHandle?.set("selectedRecipeId", recipe.id)
+                        findNavController().popBackStack()
                     }
-                    findNavController().navigate(R.id.action_newPickRecipeFragment_to_recipeStepFragment, bundle)
+                    "BakeNow" -> {
+                        val bundle = Bundle().apply {
+                            putInt("recipeId", recipe.id)
+                            putInt("stepIndex", 0)
+                        }
+                        findNavController().navigate(R.id.action_newPickRecipeFragment_to_recipeStepFragment, bundle)
+                    }
+                    "ExploreRecipes" -> {
+                        val bundle = Bundle().apply {
+                            putString("recipeName", recipe.name)
+                            putParcelableArray("scheduleData", recipe.schedule.toTypedArray())
+                        }
+                        findNavController().navigate(R.id.action_newPickRecipeFragment_to_scheduleFragment, bundle)
+                    }
                 }
             },
             onDetailsClick = { recipe ->
@@ -59,7 +75,7 @@ class NewPickRecipeFragment : Fragment() {
                     .setPositiveButton("Close", null)
                     .show()
             },
-            source = source ?: ""
+            source = source ?: "BakeNow" // Default to BakeNow if source is null
         )
 
         binding.recipeRecyclerView.apply {

@@ -24,14 +24,24 @@ class FeedbackFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val recipeId = arguments?.getInt("recipeId") ?: -1
         val stepIndex = arguments?.getInt("stepIndex") ?: -1
 
+        val recipe = MOCK_RECIPES.find { it.id == recipeId }
+
         binding.bakingNavBar.navViewStepsButton.setOnClickListener {
-            findNavController().navigate(R.id.action_global_stepListDialogFragment)
+            if (recipe != null) {
+                val bundle = Bundle().apply {
+                    putString("recipeName", recipe.name)
+                    putParcelableArray("scheduleData", recipe.schedule.toTypedArray())
+                }
+                findNavController().navigate(R.id.action_feedbackFragment_to_scheduleFragment, bundle)
+            }
         }
 
         binding.bakingNavBar.navBackButton.setOnClickListener {
             val bundle = Bundle().apply {
+                putInt("recipeId", recipeId)
                 putInt("stepIndex", stepIndex)
             }
             findNavController().navigate(R.id.action_feedbackFragment_to_stepWaitingFragment, bundle)
@@ -39,7 +49,7 @@ class FeedbackFragment : Fragment() {
 
         when (stepIndex) {
             0 -> {
-                binding.notReadyDescription.text = "Dough still looks dense, hasn\'t risen much, and feels tight."
+                binding.notReadyDescription.text = "Dough still looks dense, hasn't risen much, and feels tight."
                 binding.readyDescription.text = "Dough has risen, feels soft, and is full of air. You should see some bubbles on the surface."
             }
             1 -> {
@@ -52,13 +62,17 @@ class FeedbackFragment : Fragment() {
 
         binding.completeStepButton.setOnClickListener {
             val nextStepIndex = stepIndex + 1
-            if (nextStepIndex < 3) {
+            if (nextStepIndex < (recipe?.schedule?.size ?: 0)) {
                 val bundle = Bundle().apply {
+                    putInt("recipeId", recipeId)
                     putInt("stepIndex", nextStepIndex)
                 }
                 findNavController().navigate(R.id.action_feedbackFragment_to_recipeStepFragment, bundle)
             } else {
-                findNavController().navigate(R.id.action_feedbackFragment_to_bakeCompleteFragment)
+                val bundle = Bundle().apply {
+                    putInt("recipeId", recipeId)
+                }
+                findNavController().navigate(R.id.action_feedbackFragment_to_bakeCompleteFragment, bundle)
             }
         }
     }

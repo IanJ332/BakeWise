@@ -15,6 +15,7 @@ data class Recipe(
     val id: Int,
     val name: String,
     val totalTime: String, // e.g., "30h"
+    val activeTime: String, // e.g., "1h"
     val schedule: List<BakeStep>
 ) : Parcelable
 
@@ -24,6 +25,7 @@ val MOCK_RECIPES = listOf(
         id = 1,
         name = "Classic Sourdough",
         totalTime = "30h",
+        activeTime = "1h",
         schedule = listOf(
             BakeStep("Feed starter", 28, "Feed your sourdough starter with flour and water to ensure it's active and ready for baking."),
             BakeStep("Mix Dough", 22, "Combine the flour, water, and starter to form a shaggy dough. Let it rest before adding salt."),
@@ -36,6 +38,7 @@ val MOCK_RECIPES = listOf(
         id = 2,
         name = "Sourdough Baguettes",
         totalTime = "40h",
+        activeTime = "1.5h",
         schedule = listOf(
             BakeStep("Feed starter", 38, "Feed your sourdough starter to get it bubbly and active."),
             BakeStep("Mix Dough", 32, "Mix flour, water, and starter. Let it autolyse (rest) for an hour before adding salt."),
@@ -48,6 +51,7 @@ val MOCK_RECIPES = listOf(
         id = 3,
         name = "Seeded Sourdough",
         totalTime = "36h",
+        activeTime = "1.2h",
         schedule = listOf(
             BakeStep("Feed starter", 34, "Prepare your starter, ensuring it is vigorous and passes the 'float test'."),
             BakeStep("Mix Dough", 28, "Incorporate the seeds into the dough during the initial mix for even distribution."),
@@ -60,6 +64,7 @@ val MOCK_RECIPES = listOf(
         id = 4,
         name = "Whole Wheat Sourdough",
         totalTime = "32h",
+        activeTime = "1h",
         schedule = listOf(
             BakeStep("Feed starter", 30, "Feed your starter. Whole wheat flour may cause it to ferment faster."),
             BakeStep("Autolyse", 24, "Combine the whole wheat flour and water for a longer autolyse to fully hydrate the bran."),
@@ -73,6 +78,7 @@ val MOCK_RECIPES = listOf(
         id = 5,
         name = "Rye Sourdough",
         totalTime = "48h",
+        activeTime = "0.5h",
         schedule = listOf(
             BakeStep("Feed starter", 46, "Rye starters are common. Ensure yours is active and smells sweet."),
             BakeStep("Mix Dough", 40, "Rye dough is stickier and has less gluten. Do not expect the same elasticity as wheat dough."),

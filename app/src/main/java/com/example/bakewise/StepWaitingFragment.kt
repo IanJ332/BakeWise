@@ -41,10 +41,19 @@ class StepWaitingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val recipeId = arguments?.getInt("recipeId") ?: -1
         val stepIndex = arguments?.getInt("stepIndex") ?: -1
 
+        val recipe = MOCK_RECIPES.find { it.id == recipeId }
+
         binding.bakingNavBar.navViewStepsButton.setOnClickListener {
-            findNavController().navigate(R.id.action_global_stepListDialogFragment)
+            if (recipe != null) {
+                val bundle = Bundle().apply {
+                    putString("recipeName", recipe.name)
+                    putParcelableArray("scheduleData", recipe.schedule.toTypedArray())
+                }
+                findNavController().navigate(R.id.action_stepWaitingFragment_to_scheduleFragment, bundle)
+            }
         }
 
         binding.bakingNavBar.navBackButton.setOnClickListener {
@@ -67,6 +76,7 @@ class StepWaitingFragment : Fragment() {
                 .setMessage("This will skip the waiting period. Are you sure you want to proceed?")
                 .setPositiveButton("Yes") { _, _ ->
                     val bundle = Bundle().apply {
+                        putInt("recipeId", recipeId)
                         putInt("stepIndex", stepIndex)
                     }
                     findNavController().navigate(R.id.action_stepWaitingFragment_to_stepCompleteFragment, bundle)

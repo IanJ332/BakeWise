@@ -10,18 +10,11 @@
         app:destination="@id/homeFragment"
         app:popUpTo="@id/nav_graph" />
 
-    <action
-        android:id="@+id/action_global_stepListDialogFragment"
-        app:destination="@id/stepListDialogFragment" />
-
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.bakewise.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_homeFragment_to_recipeListFragment"
-            app:destination="@id/recipeListFragment" />
         <action
             android:id="@+id/action_homeFragment_to_newPickRecipeFragment"
             app:destination="@id/newPickRecipeFragment" />
@@ -55,48 +48,30 @@
             android:name="recipeName"
             app:argType="string" />
         <argument
-            android:name="scheduleData"
-            app:argType="com.example.bakewise.BakeStep[]" />
-        <argument
             android:name="scheduleName"
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
         <argument
-            android:name="scheduleTimes"
-            app:argType="string[]" />
+            android:name="scheduleItems"
+            app:argType="com.example.bakewise.ScheduleItem[]"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_scheduleFragment_to_recipeStepFragment"
             app:destination="@id/recipeStepFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/recipeListFragment"
-        android:name="com.example.bakewise.RecipeListFragment"
-        android:label="fragment_recipe_list"
-        tools:layout="@layout/fragment_recipe_list">
-        <action
-            android:id="@+id/action_recipeListFragment_to_recipeDetailFragment"
-            app:destination="@id/recipeDetailFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/recipeDetailFragment"
-        android:name="com.example.bakewise.RecipeDetailFragment"
-        android:label="fragment_recipe_detail">
-        <argument
-            android:name="recipeId"
-            app:argType="integer" />
-    </fragment>
-
-    <fragment
         android:id="@+id/newPickRecipeFragment"
         android:name="com.example.bakewise.NewPickRecipeFragment"
-        android:label="fragment_new_pick_recipe"
-        tools:layout="@layout/fragment_new_pick_recipe">
+        android:label="fragment_new_pick_recipe">
         <action
             android:id="@+id/action_newPickRecipeFragment_to_recipeStepFragment"
             app:destination="@id/recipeStepFragment" />
+        <action
+            android:id="@+id/action_newPickRecipeFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
     </fragment>
 
     <fragment
@@ -104,11 +79,21 @@
         android:name="com.example.bakewise.RecipeStepFragment"
         android:label="fragment_recipe_step">
         <argument
+            android:name="recipeId"
+            app:argType="integer" />
+        <argument
             android:name="stepIndex"
             app:argType="integer" />
+        <argument
+            android:name="isViewingOnly"
+            app:argType="boolean"
+            android:defaultValue="false" />
         <action
             android:id="@+id/action_recipeStepFragment_to_stepWaitingFragment"
             app:destination="@id/stepWaitingFragment" />
+        <action
+            android:id="@+id/action_recipeStepFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
     </fragment>
 
     <fragment
@@ -116,17 +101,26 @@
         android:name="com.example.bakewise.StepWaitingFragment"
         android:label="fragment_step_waiting">
         <argument
+            android:name="recipeId"
+            app:argType="integer" />
+        <argument
             android:name="stepIndex"
             app:argType="integer" />
         <action
             android:id="@+id/action_stepWaitingFragment_to_stepCompleteFragment"
             app:destination="@id/stepCompleteFragment" />
+        <action
+            android:id="@+id/action_stepWaitingFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/stepCompleteFragment"
         android:name="com.example.bakewise.StepCompleteFragment"
         android:label="fragment_step_complete">
+        <argument
+            android:name="recipeId"
+            app:argType="integer" />
         <argument
             android:name="stepIndex"
             app:argType="integer" />
@@ -136,12 +130,18 @@
         <action
             android:id="@+id/action_stepCompleteFragment_to_bakeCompleteFragment"
             app:destination="@id/bakeCompleteFragment" />
+        <action
+            android:id="@+id/action_stepCompleteFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/feedbackFragment"
         android:name="com.example.bakewise.FeedbackFragment"
         android:label="fragment_feedback">
+        <argument
+            android:name="recipeId"
+            app:argType="integer" />
         <argument
             android:name="stepIndex"
             app:argType="integer" />
@@ -154,6 +154,9 @@
         <action
             android:id="@+id/action_feedbackFragment_to_stepWaitingFragment"
             app:destination="@id/stepWaitingFragment" />
+        <action
+            android:id="@+id/action_feedbackFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
     </fragment>
 
     <fragment
@@ -165,12 +168,6 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/nav_graph" />
     </fragment>
-
-    <dialog
-        android:id="@+id/stepListDialogFragment"
-        android:name="com.example.bakewise.StepListDialogFragment"
-        android:label="dialog_step_list"
-        tools:layout="@layout/dialog_step_list" />
 
     <fragment
         android:id="@+id/currentSchedulesFragment"

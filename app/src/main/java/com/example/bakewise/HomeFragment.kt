@@ -25,11 +25,15 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.planALoafButton.setOnClickListener {
+            // Corrected: This should go to the PlanALoafFragment, not the recipe list.
             findNavController().navigate(R.id.action_homeFragment_to_planALoafFragment)
         }
 
         binding.bakeNowButton.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_newPickRecipeFragment)
+             val bundle = Bundle().apply {
+                putString("source", "BakeNow")
+            }
+            findNavController().navigate(R.id.action_homeFragment_to_newPickRecipeFragment, bundle)
         }
 
         binding.currentSchedulesButton.setOnClickListener {
@@ -37,7 +41,10 @@ class HomeFragment : Fragment() {
         }
 
         binding.exploreRecipesButton.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_recipeListFragment)
+            val bundle = Bundle().apply {
+                putString("source", "ExploreRecipes")
+            }
+            findNavController().navigate(R.id.action_homeFragment_to_newPickRecipeFragment, bundle)
         }
     }
 

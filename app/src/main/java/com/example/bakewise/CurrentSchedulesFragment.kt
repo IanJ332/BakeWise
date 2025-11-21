@@ -32,7 +32,8 @@ class CurrentSchedulesFragment : Fragment() {
             onItemClick = { schedule ->
                 val bundle = Bundle().apply {
                     putString("recipeName", schedule.recipeName)
-                    putParcelableArray("scheduleData", schedule.scheduleDetails.toTypedArray())
+                    // Pass the full ScheduleItems array so we get timestamps
+                    putParcelableArray("scheduleItems", schedule.scheduleItems.toTypedArray())
                     putString("scheduleName", schedule.name)
                 }
                 findNavController().navigate(R.id.action_currentSchedulesFragment_to_scheduleFragment, bundle)

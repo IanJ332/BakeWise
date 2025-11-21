@@ -33,7 +33,10 @@ class RecipeAdapter(
 
         fun bind(recipe: Recipe) {
             nameTextView.text = recipe.name
-            timeTextView.text = recipe.totalTime
+            
+            // Display total time and active time
+            val timeText = "${recipe.totalTime}\n(Active: ${recipe.activeTime})"
+            timeTextView.text = timeText
 
             itemView.setOnClickListener {
                 onItemClick(recipe, source)

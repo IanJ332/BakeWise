@@ -4,8 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class SavedSchedule(
-    val name: String,
-    val recipeName: String,
-    val scheduleItems: List<ScheduleItem>
+data class ScheduleItem(
+    val whenMillis: Long,
+    val bakeStep: BakeStep
 ) : Parcelable

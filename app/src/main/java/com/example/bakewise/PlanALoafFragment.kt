@@ -26,8 +26,6 @@ class PlanALoafFragment : Fragment() {
     private val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
     private var lastSchedule: List<ScheduleItem>? = null
 
-    data class ScheduleItem(val when_: Date, val bakeStep: BakeStep)
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -90,14 +88,14 @@ class PlanALoafFragment : Fragment() {
                 val stepTime = Calendar.getInstance()
                 stepTime.time = readyDate
                 stepTime.add(Calendar.HOUR, -it.hoursBeforeReady)
-                ScheduleItem(stepTime.time, it)
-            }.sortedBy { it.when_ }
+                ScheduleItem(stepTime.timeInMillis, it)
+            }.sortedBy { it.whenMillis }
 
             lastSchedule = calculatedSchedule
 
             if (lastSchedule!!.isNotEmpty()) {
                 val first = lastSchedule!!.first()
-                binding.whenToStartTextView.text = "Start: ${fmt.format(first.when_)} — ${first.bakeStep.stepName}"
+                binding.whenToStartTextView.text = "Start: ${fmt.format(Date(first.whenMillis))} — ${first.bakeStep.stepName}"
                 binding.letsScheduleButton.isVisible = true
             } else {
                 binding.whenToStartTextView.text = ""
@@ -108,13 +106,9 @@ class PlanALoafFragment : Fragment() {
         binding.letsScheduleButton.setOnClickListener {
             if (selectedRecipe == null || lastSchedule == null) return@setOnClickListener
 
-            val scheduleSteps = lastSchedule!!.map { it.bakeStep }.toTypedArray()
-            val scheduleTimes = lastSchedule!!.map { fmt.format(it.when_) }.toTypedArray()
-
             val bundle = Bundle().apply {
                 putString("recipeName", selectedRecipe!!.name)
-                putParcelableArray("scheduleData", scheduleSteps)
-                putStringArray("scheduleTimes", scheduleTimes)
+                putParcelableArray("scheduleItems", lastSchedule!!.toTypedArray())
             }
             findNavController().navigate(R.id.action_planALoafFragment_to_scheduleFragment, bundle)
         }
