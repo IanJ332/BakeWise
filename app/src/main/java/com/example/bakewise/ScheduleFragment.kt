@@ -58,6 +58,9 @@ class ScheduleFragment : Fragment() {
         val scheduleItemsArray = arguments?.getParcelableArray("scheduleItems")
         val scheduleItems = scheduleItemsArray?.map { it as ScheduleItem }
 
+        // Determine the list of steps to show. 
+        // If we have scheduleItems (from Plan), map them to BakeSteps.
+        // If not, look for the "scheduleData" argument (from Explore/Saved/BakeNow).
         val scheduleData: List<BakeStep> = if (scheduleItems != null) {
             scheduleItems.map { it.bakeStep }
         } else {
@@ -97,7 +100,8 @@ class ScheduleFragment : Fragment() {
         }
 
         val isViewingSchedule = scheduleName != null
-        val isExploring = scheduleItems == null
+        // We are exploring if we don't have specific times calculated AND we aren't viewing a saved schedule
+        val isExploring = scheduleItems == null && !isBakeNowPreview
 
         if (isViewingSchedule) {
             // Viewing a saved schedule
