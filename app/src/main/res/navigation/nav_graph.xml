@@ -186,6 +186,20 @@
         android:id="@+id/pastLoavesFragment"
         android:name="com.example.bakewise.PastLoavesFragment"
         android:label="fragment_past_loaves"
-        tools:layout="@layout/fragment_past_loaves" />
+        tools:layout="@layout/fragment_past_loaves">
+        <action
+            android:id="@+id/action_pastLoavesFragment_to_loafDetailsFragment"
+            app:destination="@id/loafDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loafDetailsFragment"
+        android:name="com.example.bakewise.LoafDetailsFragment"
+        android:label="fragment_loaf_details"
+        tools:layout="@layout/fragment_loaf_details">
+        <argument
+            android:name="loaf"
+            app:argType="com.example.bakewise.PastLoaf" />
+    </fragment>
 
 </navigation>
