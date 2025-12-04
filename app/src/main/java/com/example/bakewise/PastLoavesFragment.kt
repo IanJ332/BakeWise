@@ -47,6 +47,21 @@ class PastLoavesFragment : Fragment() {
         val dialogBinding = DialogLoafDetailsBinding.inflate(layoutInflater)
         
         dialogBinding.detailTitleTextView.text = "${loaf.recipeName} Notes"
+        
+        if (loaf.finalPhotoUri != null) {
+            dialogBinding.detailLoafImage.isVisible = true
+            dialogBinding.detailLoafImage.setImageURI(android.net.Uri.parse(loaf.finalPhotoUri))
+        } else {
+            dialogBinding.detailLoafImage.isVisible = false
+        }
+        
+        if (loaf.feedback != null) {
+            dialogBinding.detailFeedbackText.isVisible = true
+            dialogBinding.detailFeedbackText.text = loaf.feedback
+        } else {
+            dialogBinding.detailFeedbackText.isVisible = false
+        }
+
         dialogBinding.detailsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         dialogBinding.detailsRecyclerView.adapter = LoafDetailsAdapter(loaf.notes)
 

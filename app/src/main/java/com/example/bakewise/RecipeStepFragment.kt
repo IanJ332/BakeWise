@@ -16,16 +16,6 @@ class RecipeStepFragment : Fragment() {
     private var _binding: FragmentRecipeStepBinding? = null
     private val binding get() = _binding!!
 
-    private var currentImageUri: String? = null
-
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        if (uri != null) {
-            currentImageUri = uri.toString()
-            binding.stepPhotoImageView.setImageURI(uri)
-            binding.stepPhotoImageView.isVisible = true
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,16 +39,11 @@ class RecipeStepFragment : Fragment() {
             binding.instructionsTextView.text = step.description
         }
 
-        // Restore saved note and image if any
+        // Restore saved note if any
         val existingNote = CurrentBakeSession.stepNotes.find { it.stepIndex == stepIndex }
         if (existingNote != null) {
             if (!existingNote.note.isNullOrEmpty()) {
                 binding.noteInputEditText.setText(existingNote.note)
-            }
-            if (existingNote.imageUri != null) {
-                currentImageUri = existingNote.imageUri
-                binding.stepPhotoImageView.setImageURI(Uri.parse(existingNote.imageUri))
-                binding.stepPhotoImageView.isVisible = true
             }
         }
 
@@ -75,11 +60,7 @@ class RecipeStepFragment : Fragment() {
         // Hide note input and photo button if viewing only
         binding.noteInputLayout.isVisible = !isViewingOnly
         binding.noteInputEditText.isVisible = !isViewingOnly
-        binding.addPhotoButton.isVisible = !isViewingOnly
-
-        binding.addPhotoButton.setOnClickListener {
-            pickImageLauncher.launch("image/*")
-        }
+        binding.addPhotoButton.isVisible = false // Feature removed
 
         if (!isViewingOnly) {
             // Update session info if needed
@@ -115,8 +96,8 @@ class RecipeStepFragment : Fragment() {
 
     private fun saveCurrentNote(stepIndex: Int, stepName: String?) {
         val note = binding.noteInputEditText.text.toString()
-        if ((note.isNotBlank() || currentImageUri != null) && stepName != null) {
-            CurrentBakeSession.addNote(stepIndex, stepName, note, currentImageUri)
+        if (note.isNotBlank() && stepName != null) {
+            CurrentBakeSession.addNote(stepIndex, stepName, note, null)
         }
     }
 
