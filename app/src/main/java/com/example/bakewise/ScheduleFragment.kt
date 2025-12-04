@@ -52,7 +52,9 @@ class ScheduleFragment : Fragment() {
 
         val recipeName = arguments?.getString("recipeName") ?: ""
         val scheduleName = arguments?.getString("scheduleName")
-
+        val isBakeNowPreview = arguments?.getBoolean("isBakeNowPreview") ?: false
+        val recipeId = arguments?.getInt("recipeId") ?: -1
+        
         val scheduleItemsArray = arguments?.getParcelableArray("scheduleItems")
         val scheduleItems = scheduleItemsArray?.map { it as ScheduleItem }
 
@@ -64,13 +66,13 @@ class ScheduleFragment : Fragment() {
 
         // Find the recipe ID if possible, to pass to notification scheduler
         val recipe = MOCK_RECIPES.find { it.name == recipeName }
-        val recipeId = recipe?.id ?: -1
+        val recipeIdForScheduler = recipe?.id ?: -1
 
         binding.recipeNameTextView.text = recipeName
 
         scheduleData.forEachIndexed { index, step ->
             val textView = TextView(requireContext()).apply {
-
+                
                 val timeString = scheduleItems?.getOrNull(index)?.let { 
                     SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date(it.whenMillis)) 
                 }
@@ -98,12 +100,29 @@ class ScheduleFragment : Fragment() {
         val isExploring = scheduleItems == null
 
         if (isViewingSchedule) {
-             // Viewing a saved schedule
+            // Viewing a saved schedule
             binding.scheduleNameEditText.isVisible = false
             binding.saveScheduleButton.isVisible = false
             binding.recipeNameTextView.text = scheduleName
+        } else if (isBakeNowPreview) {
+            // Previewing before Bake Now
+            binding.scheduleNameEditText.isVisible = false
+            binding.saveScheduleButton.isVisible = false
+            binding.startBakingButton.isVisible = true
+            
+            binding.startBakingButton.setOnClickListener {
+                if (recipeId != -1) {
+                    val bundle = Bundle().apply {
+                        putInt("recipeId", recipeId)
+                        putInt("stepIndex", 0)
+                    }
+                    findNavController().navigate(R.id.action_scheduleFragment_to_recipeStepFragment, bundle)
+                } else {
+                    Toast.makeText(requireContext(), "Error: Recipe ID not found", Toast.LENGTH_SHORT).show()
+                }
+            }
         } else if (isExploring) {
-             // Exploring recipes (no times)
+            // Exploring recipes (no times)
             binding.scheduleNameEditText.isVisible = false
             binding.saveScheduleButton.isVisible = false
         } else {
@@ -115,13 +134,12 @@ class ScheduleFragment : Fragment() {
             binding.saveScheduleButton.setOnClickListener {
                 val newScheduleName = binding.scheduleNameEditText.text.toString()
                 if (newScheduleName.isNotBlank()) {
-                    // Use scheduleItems!! here because we are in the "Creating" block, so it must exist
                     val newSchedule = SavedSchedule(newScheduleName, recipeName, scheduleItems!!)
                     ScheduleRepository.savedSchedules.add(newSchedule)
-
+                    
                     // Set the name to pending variable so we can use it in permission callback
                     pendingScheduleName = newScheduleName
-
+                    
                     // Initiate permission check and scheduling
                     checkNotificationPermission(scheduleItems)
                 } else {
@@ -155,12 +173,12 @@ class ScheduleFragment : Fragment() {
             if (!alarmManager.canScheduleExactAlarms()) {
                 Toast.makeText(requireContext(), "Please allow setting exact alarms for notifications", Toast.LENGTH_LONG).show()
                 startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
-                // We can't easily callback from settings here without lifecycle complexity,
+                // We can't easily callback from settings here without lifecycle complexity, 
                 // so for this prototype we just ask. In a real app, use onResume to check again.
                 return
             }
         }
-
+        
         // If we are here, we have permissions
         pendingScheduleItems?.let {
             val recipeName = arguments?.getString("recipeName") ?: ""

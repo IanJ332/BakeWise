@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bakewise.databinding.FragmentNewPickRecipeBinding
+import java.util.Calendar
 
 class NewPickRecipeFragment : Fragment() {
 
@@ -51,9 +52,38 @@ class NewPickRecipeFragment : Fragment() {
                         // Start a new baking session
                         CurrentBakeSession.clear()
                         
+                        // Calculate times based on current time for "Bake Now"
+                        val currentTime = System.currentTimeMillis()
+                        val scheduleItems = recipe.schedule.map { step ->
+                            // For Bake Now, we assume we start step 1 NOW.
+                            // But wait, the schedule data has "hoursBeforeReady".
+                            // "Bake Now" usually implies we are doing step 1 now.
+                            // The subsequent steps are spaced out based on recipe logic.
+                            
+                            // Let's assume the "schedule" list in MOCK_RECIPES is ordered.
+                            // We need to calculate relative timestamps.
+                            // The BakeStep model has 'hoursBeforeReady'.
+                            // If step 0 is NOW, then Ready Time is NOW + step[0].hoursBeforeReady ?
+                            // No, 'hoursBeforeReady' is relative to the END.
+                            // E.g. Step 0 (Feed Starter): 28 hours before ready.
+                            // Step 1 (Mix Dough): 22 hours before ready.
+                            // So Step 1 is 6 hours AFTER Step 0.
+                            
+                            // So:
+                            // Ready Time = Now + Step[0].hoursBeforeReady
+                            // Then for each step: Time = Ready Time - Step.hoursBeforeReady
+                            
+                            val firstStepHours = recipe.schedule.firstOrNull()?.hoursBeforeReady ?: 0
+                            val readyTimeMillis = currentTime + (firstStepHours * 60 * 60 * 1000L)
+                            
+                            val stepTime = readyTimeMillis - (step.hoursBeforeReady * 60 * 60 * 1000L)
+                            ScheduleItem(stepTime, step)
+                        }
+                        
                         val bundle = Bundle().apply {
                             putString("recipeName", recipe.name)
-                            putParcelableArray("scheduleData", recipe.schedule.toTypedArray())
+                            // Pass calculated schedule items instead of just raw data
+                            putParcelableArray("scheduleItems", scheduleItems.toTypedArray())
                             putBoolean("isBakeNowPreview", true)
                             putInt("recipeId", recipe.id)
                         }
