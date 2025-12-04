@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -121,8 +123,6 @@ class PlanALoafFragment : Fragment() {
         val minReadyCal = Calendar.getInstance()
         minReadyCal.add(Calendar.HOUR_OF_DAY, totalHours)
 
-        val currentCalendar = Calendar.getInstance()
-
         DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
@@ -131,9 +131,9 @@ class PlanALoafFragment : Fragment() {
                 readyCal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 showTimePicker(minReadyCal)
             },
-            currentCalendar.get(Calendar.YEAR),
-            currentCalendar.get(Calendar.MONTH),
-            currentCalendar.get(Calendar.DAY_OF_MONTH)
+            minReadyCal.get(Calendar.YEAR),
+            minReadyCal.get(Calendar.MONTH),
+            minReadyCal.get(Calendar.DAY_OF_MONTH)
         ).apply {
             datePicker.minDate = minReadyCal.timeInMillis
             show()
@@ -141,21 +141,74 @@ class PlanALoafFragment : Fragment() {
     }
 
     private fun showTimePicker(minReadyCal: Calendar) {
-        val hour = readyCal.get(Calendar.HOUR_OF_DAY)
-        val min = readyCal.get(Calendar.MINUTE)
-        TimePickerDialog(requireContext(), { _, hourOfDay, minute ->
+        val hour = minReadyCal.get(Calendar.HOUR_OF_DAY)
+        val min = minReadyCal.get(Calendar.MINUTE)
+        
+        readyCal.set(Calendar.HOUR_OF_DAY, hour)
+        readyCal.set(Calendar.MINUTE, min)
+        readyCal.set(Calendar.SECOND, 0)
+        readyCal.set(Calendar.MILLISECOND, 0)
+
+        if (readyCal.timeInMillis < minReadyCal.timeInMillis) {
+            readyCal.timeInMillis = minReadyCal.timeInMillis
+        }
+        
+        // We add a "Subtitle" or Title to the dialog to show the Start Time dynamically.
+        // Since TimePickerDialog doesn't natively support a dynamic subtitle easily without custom view,
+        // we will update the Title with the projected Start Time as the user scrolls.
+        
+        val tpd = object : TimePickerDialog(requireContext(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar, { _, hourOfDay, minute ->
             readyCal.set(Calendar.HOUR_OF_DAY, hourOfDay)
             readyCal.set(Calendar.MINUTE, minute)
             readyCal.set(Calendar.SECOND, 0)
             readyCal.set(Calendar.MILLISECOND, 0)
 
             if (readyCal.timeInMillis < minReadyCal.timeInMillis) {
-                Toast.makeText(requireContext(), "Selected time is not feasible for this recipe. Please pick a later time.", Toast.LENGTH_LONG).show()
-                binding.readyTimeEditText.setText("")
-            } else {
-                binding.readyTimeEditText.setText(fmt.format(readyCal.time))
+                readyCal.timeInMillis = minReadyCal.timeInMillis
+                Toast.makeText(requireContext(), "Time adjusted to the earliest feasible time.", Toast.LENGTH_SHORT).show()
+            } 
+            
+            binding.readyTimeEditText.setText(fmt.format(readyCal.time))
+        }, hour, min, false) {
+            
+            override fun onTimeChanged(view: TimePicker, hourOfDay: Int, minute: Int) {
+                super.onTimeChanged(view, hourOfDay, minute)
+                
+                val tempCal = Calendar.getInstance()
+                tempCal.timeInMillis = readyCal.timeInMillis 
+                tempCal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                tempCal.set(Calendar.MINUTE, minute)
+                tempCal.set(Calendar.SECOND, 0)
+                tempCal.set(Calendar.MILLISECOND, 0)
+                
+                if (tempCal.timeInMillis < minReadyCal.timeInMillis) {
+                    updateTime(minReadyCal.get(Calendar.HOUR_OF_DAY), minReadyCal.get(Calendar.MINUTE))
+                    // If clamped, we update the title based on the clamped time
+                    updateStartTimeTitle(this, minReadyCal)
+                } else {
+                    // If valid, update title based on user selection
+                    updateStartTimeTitle(this, tempCal)
+                }
             }
-        }, hour, min, false).show()
+        }
+        
+        tpd.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        
+        // Set initial title
+        updateStartTimeTitle(tpd, readyCal)
+        
+        tpd.show()
+    }
+    
+    private fun updateStartTimeTitle(dialog: TimePickerDialog, readyTime: Calendar) {
+        // Calculate start time: Ready Time - Total Hours
+        val totalHours = selectedRecipe!!.schedule.maxOfOrNull { it.hoursBeforeReady } ?: 0
+        val startTime = Calendar.getInstance()
+        startTime.timeInMillis = readyTime.timeInMillis
+        startTime.add(Calendar.HOUR_OF_DAY, -totalHours)
+        
+        val startFmt = SimpleDateFormat("EEE HH:mm", Locale.US)
+        dialog.setTitle("Start Baking at: ${startFmt.format(startTime.time)}")
     }
 
     override fun onDestroyView() {
