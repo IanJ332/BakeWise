@@ -27,9 +27,15 @@ class CurrentSchedulesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Cleanup expired schedules whenever we view the list
+        ScheduleRepository.cleanupExpiredSchedules()
+
         adapter = SavedScheduleAdapter(
             ScheduleRepository.savedSchedules,
             onItemClick = { schedule ->
+                // Set the schedule name in the session so we can remove it later if completed
+                CurrentBakeSession.scheduleName = schedule.name
+                
                 val bundle = Bundle().apply {
                     putString("recipeName", schedule.recipeName)
                     // Pass the full ScheduleItems array so we get timestamps

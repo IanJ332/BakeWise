@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_homeFragment_to_currentSchedulesFragment"
             app:destination="@id/currentSchedulesFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_pastLoavesFragment"
+            app:destination="@id/pastLoavesFragment" />
     </fragment>
 
     <fragment
@@ -178,5 +181,11 @@
             android:id="@+id/action_currentSchedulesFragment_to_scheduleFragment"
             app:destination="@id/scheduleFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/pastLoavesFragment"
+        android:name="com.example.bakewise.PastLoavesFragment"
+        android:label="fragment_past_loaves"
+        tools:layout="@layout/fragment_past_loaves" />
 
 </navigation>

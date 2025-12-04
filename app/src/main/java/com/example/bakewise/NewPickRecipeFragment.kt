@@ -48,6 +48,9 @@ class NewPickRecipeFragment : Fragment() {
                         findNavController().popBackStack()
                     }
                     "BakeNow" -> {
+                        // Start a new baking session
+                        CurrentBakeSession.clear()
+                        
                         val bundle = Bundle().apply {
                             putInt("recipeId", recipe.id)
                             putInt("stepIndex", 0)

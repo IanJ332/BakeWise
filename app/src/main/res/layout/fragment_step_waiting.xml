@@ -37,11 +37,11 @@
             android:text="Add to Calendar" />
 
         <Button
-            android:id="@+id/simulate_times_up_button"
+            android:id="@+id/continue_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="Simulate Time's Up!" />
+            android:text="Continue" />
 
     </LinearLayout>
 

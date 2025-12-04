@@ -70,19 +70,13 @@ class StepWaitingFragment : Fragment() {
             askNotificationPermission()
         }
 
-        binding.simulateTimesUpButton.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Are you sure?")
-                .setMessage("This will skip the waiting period. Are you sure you want to proceed?")
-                .setPositiveButton("Yes") { _, _ ->
-                    val bundle = Bundle().apply {
-                        putInt("recipeId", recipeId)
-                        putInt("stepIndex", stepIndex)
-                    }
-                    findNavController().navigate(R.id.action_stepWaitingFragment_to_stepCompleteFragment, bundle)
-                }
-                .setNegativeButton("No", null)
-                .show()
+        // Renamed from simulateTimesUpButton to continueButton to reflect manual progression
+        binding.continueButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("recipeId", recipeId)
+                putInt("stepIndex", stepIndex)
+            }
+            findNavController().navigate(R.id.action_stepWaitingFragment_to_stepCompleteFragment, bundle)
         }
     }
 
