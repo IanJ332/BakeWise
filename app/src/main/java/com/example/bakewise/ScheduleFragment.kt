@@ -52,7 +52,7 @@ class ScheduleFragment : Fragment() {
 
         val recipeName = arguments?.getString("recipeName") ?: ""
         val scheduleName = arguments?.getString("scheduleName")
-        
+
         val scheduleItemsArray = arguments?.getParcelableArray("scheduleItems")
         val scheduleItems = scheduleItemsArray?.map { it as ScheduleItem }
 
@@ -70,7 +70,7 @@ class ScheduleFragment : Fragment() {
 
         scheduleData.forEachIndexed { index, step ->
             val textView = TextView(requireContext()).apply {
-                
+
                 val timeString = scheduleItems?.getOrNull(index)?.let { 
                     SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date(it.whenMillis)) 
                 }
@@ -98,13 +98,16 @@ class ScheduleFragment : Fragment() {
         val isExploring = scheduleItems == null
 
         if (isViewingSchedule) {
+             // Viewing a saved schedule
             binding.scheduleNameEditText.isVisible = false
             binding.saveScheduleButton.isVisible = false
             binding.recipeNameTextView.text = scheduleName
         } else if (isExploring) {
+             // Exploring recipes (no times)
             binding.scheduleNameEditText.isVisible = false
             binding.saveScheduleButton.isVisible = false
         } else {
+            // Creating a new schedule (we have times, but not a saved name yet)
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
             val defaultScheduleName = "$recipeName - ${sdf.format(Date())}"
             binding.scheduleNameEditText.setText(defaultScheduleName)
@@ -112,12 +115,13 @@ class ScheduleFragment : Fragment() {
             binding.saveScheduleButton.setOnClickListener {
                 val newScheduleName = binding.scheduleNameEditText.text.toString()
                 if (newScheduleName.isNotBlank()) {
+                    // Use scheduleItems!! here because we are in the "Creating" block, so it must exist
                     val newSchedule = SavedSchedule(newScheduleName, recipeName, scheduleItems!!)
                     ScheduleRepository.savedSchedules.add(newSchedule)
-                    
+
                     // Set the name to pending variable so we can use it in permission callback
                     pendingScheduleName = newScheduleName
-                    
+
                     // Initiate permission check and scheduling
                     checkNotificationPermission(scheduleItems)
                 } else {
@@ -151,12 +155,12 @@ class ScheduleFragment : Fragment() {
             if (!alarmManager.canScheduleExactAlarms()) {
                 Toast.makeText(requireContext(), "Please allow setting exact alarms for notifications", Toast.LENGTH_LONG).show()
                 startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
-                // We can't easily callback from settings here without lifecycle complexity, 
+                // We can't easily callback from settings here without lifecycle complexity,
                 // so for this prototype we just ask. In a real app, use onResume to check again.
                 return
             }
         }
-        
+
         // If we are here, we have permissions
         pendingScheduleItems?.let {
             val recipeName = arguments?.getString("recipeName") ?: ""
