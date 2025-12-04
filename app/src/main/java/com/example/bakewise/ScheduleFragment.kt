@@ -32,6 +32,8 @@ class ScheduleFragment : Fragment() {
 
         val recipeName = arguments?.getString("recipeName") ?: ""
         val scheduleName = arguments?.getString("scheduleName")
+        val isBakeNowPreview = arguments?.getBoolean("isBakeNowPreview") ?: false
+        val recipeId = arguments?.getInt("recipeId") ?: -1
         
         // Try to get the schedule items (calculated times) from Plan a Loaf flow
         // We use getParcelableArray because that's what we sent
@@ -40,7 +42,7 @@ class ScheduleFragment : Fragment() {
 
         // Determine the list of steps to show. 
         // If we have scheduleItems (from Plan), map them to BakeSteps.
-        // If not, look for the "scheduleData" argument (from Explore/Saved).
+        // If not, look for the "scheduleData" argument (from Explore/Saved/BakeNow).
         val scheduleData: List<BakeStep> = if (scheduleItems != null) {
             scheduleItems.map { it.bakeStep }
         } else {
@@ -80,15 +82,30 @@ class ScheduleFragment : Fragment() {
 
         val isViewingSchedule = scheduleName != null
         // We are exploring if we don't have specific times calculated AND we aren't viewing a saved schedule
-        // Wait, viewing a saved schedule DOES have times (scheduleItems is not null).
-        // So isExploring is really just "scheduleItems is null".
-        val isExploring = scheduleItems == null
+        val isExploring = scheduleItems == null && !isBakeNowPreview
 
         if (isViewingSchedule) {
              // Viewing a saved schedule
             binding.scheduleNameEditText.isVisible = false
             binding.saveScheduleButton.isVisible = false
             binding.recipeNameTextView.text = scheduleName
+        } else if (isBakeNowPreview) {
+            // Previewing before Bake Now
+            binding.scheduleNameEditText.isVisible = false
+            binding.saveScheduleButton.isVisible = false
+            binding.startBakingButton.isVisible = true
+            
+            binding.startBakingButton.setOnClickListener {
+                if (recipeId != -1) {
+                    val bundle = Bundle().apply {
+                        putInt("recipeId", recipeId)
+                        putInt("stepIndex", 0)
+                    }
+                    findNavController().navigate(R.id.action_scheduleFragment_to_recipeStepFragment, bundle)
+                } else {
+                    Toast.makeText(requireContext(), "Error: Recipe ID not found", Toast.LENGTH_SHORT).show()
+                }
+            }
         } else if (isExploring) {
              // Exploring recipes (no times)
             binding.scheduleNameEditText.isVisible = false

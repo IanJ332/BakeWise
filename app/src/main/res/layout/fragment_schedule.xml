@@ -42,4 +42,12 @@
         android:layout_marginTop="16dp"
         android:text="Save Schedule" />
 
+    <Button
+        android:id="@+id/start_baking_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Start Baking"
+        android:visibility="gone" />
+
 </LinearLayout>

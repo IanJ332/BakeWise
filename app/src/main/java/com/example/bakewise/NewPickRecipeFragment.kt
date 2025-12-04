@@ -49,10 +49,12 @@ class NewPickRecipeFragment : Fragment() {
                     }
                     "BakeNow" -> {
                         val bundle = Bundle().apply {
+                            putString("recipeName", recipe.name)
+                            putParcelableArray("scheduleData", recipe.schedule.toTypedArray())
+                            putBoolean("isBakeNowPreview", true)
                             putInt("recipeId", recipe.id)
-                            putInt("stepIndex", 0)
                         }
-                        findNavController().navigate(R.id.action_newPickRecipeFragment_to_recipeStepFragment, bundle)
+                        findNavController().navigate(R.id.action_newPickRecipeFragment_to_scheduleFragment, bundle)
                     }
                     "ExploreRecipes" -> {
                         val bundle = Bundle().apply {
