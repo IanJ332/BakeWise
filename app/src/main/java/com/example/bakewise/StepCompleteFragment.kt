@@ -44,14 +44,16 @@ class StepCompleteFragment : Fragment() {
         }
 
         binding.startEvaluationButton.setOnClickListener {
-            if (stepIndex == 2) {
-                // It's the FINAL step (Bake). Skip feedback and go to the end.
+            val totalSteps = recipe?.schedule?.size ?: 0
+            // Check if this is the last step. Indices are 0-based, so last index is size-1.
+            if (stepIndex >= totalSteps - 1) {
+                // It's the FINAL step. Skip feedback and go to the end.
                 val bundle = Bundle().apply {
                     putInt("recipeId", recipeId)
                 }
                 findNavController().navigate(R.id.action_stepCompleteFragment_to_bakeCompleteFragment, bundle)
             } else {
-                // It's Step 0 or 1. Proceed to feedback.
+                // Proceed to feedback/evaluation for the current step.
                 val bundle = Bundle().apply {
                     putInt("recipeId", recipeId)
                     putInt("stepIndex", stepIndex)

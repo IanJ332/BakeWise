@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -47,7 +48,56 @@ class RecipeStepFragment : Fragment() {
         if (step != null) {
             binding.stepTitleTextView.text = "Step ${stepIndex + 1}: ${step.stepName}"
             binding.instructionsTextView.text = step.description
+            // ---------------------------------------------
+            // DISPLAY STATIC IMAGES FOR THE RECIPE STEP
+            // ---------------------------------------------
+            if (step.imageResId.isNotEmpty()) {
+                binding.imageScrollView.isVisible = true
+
+                val container = binding.imageContainer
+                container.removeAllViews()
+
+                for (resId in step.imageResId) {
+
+                    val layoutParams = ViewGroup.MarginLayoutParams(
+                        300, // width in px
+                        ViewGroup.LayoutParams.MATCH_PARENT // height
+                    )
+                    layoutParams.rightMargin = 16
+
+                    val imageView = ImageView(requireContext())
+                    imageView.layoutParams = layoutParams
+                    imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+                    imageView.setImageResource(resId)
+
+                    container.addView(imageView)
+                }
+            }
+            if (step.videoResId.isNotEmpty()) {
+                binding.videoView.isVisible = true
+
+                val videoResId = step.videoResId.first() // For now, show the first video
+                val videoUri = Uri.parse("android.resource://${requireContext().packageName}/$videoResId")
+
+                binding.videoView.setVideoURI(videoUri)
+
+                // Optional auto-start
+                binding.videoView.setOnPreparedListener { mp ->
+                    mp.isLooping = true
+                    binding.videoView.start()
+                }
+
+                // Show simple tap-to-play/pause behavior
+                binding.videoView.setOnClickListener {
+                    if (binding.videoView.isPlaying) {
+                        binding.videoView.pause()
+                    } else {
+                        binding.videoView.start()
+                    }
+                }
+            }
         }
+
 
         // Restore saved note and image if any
         val existingNote = CurrentBakeSession.stepNotes.find { it.stepIndex == stepIndex }
