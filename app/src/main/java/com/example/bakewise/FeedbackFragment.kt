@@ -75,15 +75,132 @@ class FeedbackFragment : Fragment() {
 
         // Setup Reference Content
         when (stepIndex) {
-            0 -> {
-                binding.notReadyDescription.text = "Dough still looks dense, hasn't risen much, and feels tight."
-                binding.readyDescription.text = "Dough has risen, feels soft, and is full of air. You should see some bubbles on the surface."
+            0 -> { // Feed Starter
+                binding.notReadyTitle.text = "Under-active"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "Dough still looks dense, hasn't risen much, and feels tight. Few or no bubbles."
+                binding.readyDescription.text = "Starter has doubled or tripled in size, is bubbly, and smells pleasant/tangy. It floats in water."
+                binding.imageNotReady.setImageResource(R.drawable.starter_not_ready)
+                binding.imageReady.setImageResource(R.drawable.starter_ready)
             }
-            1 -> {
+            1 -> { // Autolyse
+                binding.notReadyTitle.text = "Dry spots"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "You can see dry flour patches or hard lumps. The dough feels very stiff and uneven."
+                binding.readyDescription.text = "No dry flour visible. The dough is a shaggy, sticky mass but is fully hydrated."
+                binding.imageNotReady.setImageResource(R.drawable.autolyse_dry)
+                binding.imageReady.setImageResource(R.drawable.autolyse_ready)
+            }
+            2 -> { // Add Salt + First Fold
+                binding.notReadyTitle.text = "Gritty"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "You can still feel grains of salt when you pinch the dough. The dough tears immediately when stretched."
+                binding.readyDescription.text = "Salt is fully dissolved and incorporated. The dough starts to show some stretchiness."
+                binding.imageNotReady.setImageResource(R.drawable.autolyse_dry) // Reuse
+                binding.imageReady.setImageResource(R.drawable.autolyse_ready)
+            }
+            3 -> { // Strengthening Fold
+                binding.notReadyTitle.text = "Slack"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "The dough is very slack and spreads out like a puddle immediately after folding. No structure."
+                binding.readyDescription.text = "The dough holds its shape for a while after folding. The surface is becoming smoother and stronger."
+                binding.imageNotReady.setImageResource(R.drawable.bulk_not_ready) // Reuse
+                binding.imageReady.setImageResource(R.drawable.bulk_ready)
+            }
+            4 -> { // Bulk Fermentation
+                binding.notReadyTitle.text = "Under-fermented"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "Dough looks flat, dense, and hasn't grown much. No bubbles on the surface."
+                binding.readyDescription.text = "Dough has grown 30-50% in volume, looks puffy, and jiggles like jello when you shake the bowl. Bubbles visible."
+                binding.imageNotReady.setImageResource(R.drawable.bulk_not_ready)
+                binding.imageReady.setImageResource(R.drawable.bulk_ready)
+            }
+            5 -> { // Preshape
+                binding.notReadyTitle.text = "Sticky/Weak"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "Dough is an uncontrollable sticky mess that refuses to form a ball and spreads flat instantly."
+                binding.readyDescription.text = "Dough forms a loose round shape and holds it reasonably well on the counter."
+                binding.imageNotReady.setImageResource(R.drawable.shape_tearing) // Reuse
+                binding.imageReady.setImageResource(R.drawable.shape_smooth)
+            }
+            6 -> { // Final Shape
+                binding.notReadyTitle.text = "Tearing"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "The surface of the dough tears (looks like stretch marks) or feels weak and loose."
+                binding.readyDescription.text = "The dough ball has a smooth, taut skin (tension) and springs back slightly when touched."
+                binding.imageNotReady.setImageResource(R.drawable.shape_tearing)
+                binding.imageReady.setImageResource(R.drawable.shape_smooth)
+            }
+            7 -> { // Cold Proof
                 binding.notReadyTitle.text = "Under-proofed"
                 binding.readyTitle.text = "Ready"
-                binding.notReadyDescription.text = "If you poke the dough, the hole springs back very quickly."
-                binding.readyDescription.text = "If you poke the dough, the indentation slowly springs back, but not completely."
+                binding.notReadyDescription.text = "If you poke the dough, the hole springs back very quickly and completely."
+                binding.readyDescription.text = "If you poke the dough, the indentation slowly springs back but leaves a small dent."
+                binding.imageNotReady.setImageResource(R.drawable.poke_underproofed)
+                binding.imageReady.setImageResource(R.drawable.poke_ready)
+            }
+            8 -> { // Preheat
+                binding.notReadyTitle.text = "Too Cold"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "Oven thermometer reads below 250°C."
+                binding.readyDescription.text = "Oven is fully preheated to 250°C (482°F) and Dutch oven is scorching hot."
+                binding.imageNotReady.setImageResource(R.drawable.bake_pale) // Reuse
+                binding.imageReady.setImageResource(R.drawable.bake_golden)
+            }
+            9 -> { // Bake (Lid On)
+                binding.notReadyTitle.text = "Flat"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "Loaf looks flat or pale."
+                binding.readyDescription.text = "Loaf has expanded significantly (oven spring) and the cut has opened up."
+                binding.imageNotReady.setImageResource(R.drawable.bake_pale)
+                binding.imageReady.setImageResource(R.drawable.bake_golden)
+            }
+            10 -> { // Bake (Lid Off)
+                binding.notReadyTitle.text = "Pale"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "Crust is pale or soft. Bottom does not sound hollow when tapped."
+                binding.readyDescription.text = "Deep golden brown to dark crust. The loaf sounds hollow when tapped on the bottom."
+                binding.imageNotReady.setImageResource(R.drawable.bake_pale)
+                binding.imageReady.setImageResource(R.drawable.bake_golden)
+            }
+            11 -> { // Cooling
+                binding.notReadyTitle.text = "Warm"
+                binding.readyTitle.text = "Ready"
+                binding.notReadyDescription.text = "Bread is still warm to the touch."
+                binding.readyDescription.text = "Bread is completely cool (room temperature) and ready to slice."
+                binding.imageNotReady.setImageResource(R.drawable.bake_golden)
+                binding.imageReady.setImageResource(R.drawable.bake_golden)
+            }
+        }
+
+        // Setup Evaluation Logic
+        binding.takePhotoButton.setOnClickListener {
+            val photoFile = File(requireContext().getExternalFilesDir(android.os.Environment.DIRECTORY_PICTURES), "step_${stepIndex}_${System.currentTimeMillis()}.jpg")
+            currentPhotoUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", photoFile)
+            takePhotoLauncher.launch(currentPhotoUri)
+        }
+
+        binding.selectGalleryButton.setOnClickListener {
+            selectGalleryLauncher.launch("image/*")
+        }
+
+        binding.addToNotesButton.setOnClickListener {
+            if (currentFeedback != null) {
+                // Save to session notes
+                val existingNote = CurrentBakeSession.stepNotes.find { it.stepIndex == stepIndex }
+                val noteText = if (existingNote != null) {
+                    "${existingNote.note}\n\n[AI Feedback]: $currentFeedback"
+                } else {
+                    "[AI Feedback]: $currentFeedback"
+                }
+                
+                val photoToSave = currentPhotoUri?.toString() ?: existingNote?.imageUri
+                
+                CurrentBakeSession.addNote(stepIndex, stepName, noteText, photoToSave)
+                
+                Toast.makeText(requireContext(), "Added to Diary!", Toast.LENGTH_SHORT).show()
+                binding.addToNotesButton.isEnabled = false
+                binding.addToNotesButton.text = "Added"
             }
         }
 
