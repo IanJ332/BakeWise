@@ -1,62 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".ScheduleFragment">
-
-    <TextView
-        android:id="@+id/recipe_name_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        tools:text="Classic Sourdough" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Your baking schedule:"
-        android:textSize="16sp" />
+    android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/schedule_steps_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".ScheduleFragment">
 
-    <EditText
-        android:id="@+id/schedule_name_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Schedule Name" />
+        <TextView
+            android:id="@+id/recipe_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            tools:text="Classic Sourdough" />
 
-    <Button
-        android:id="@+id/save_schedule_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Save Schedule" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Your baking schedule:"
+            android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/export_calendar_button"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Export to Calendar"
-        android:visibility="gone" />
+        <LinearLayout
+            android:id="@+id/schedule_steps_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical" />
 
-    <Button
-        android:id="@+id/start_baking_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Start Baking"
-        android:visibility="gone" />
+        <EditText
+            android:id="@+id/schedule_name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Schedule Name" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/save_schedule_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Save Schedule" />
+
+        <Button
+            android:id="@+id/export_calendar_button"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Export to Calendar"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/start_baking_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Start Baking"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

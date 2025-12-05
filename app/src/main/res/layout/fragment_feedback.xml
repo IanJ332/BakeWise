@@ -129,6 +129,15 @@
                 android:textStyle="bold"
                 android:textSize="18sp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="(Tap image to zoom)"
+                android:textSize="12sp"
+                android:textColor="#757575"
+                android:textStyle="italic"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -151,7 +160,9 @@
                             android:id="@+id/image_not_ready"
                             android:layout_width="match_parent"
                             android:layout_height="100dp"
-                            android:background="@android:color/darker_gray" />
+                            android:scaleType="centerCrop"
+                            android:background="@drawable/bg_top_rounded"
+                            android:clipToOutline="true" />
 
                         <TextView
                             android:id="@+id/not_ready_title"
@@ -189,7 +200,9 @@
                             android:id="@+id/image_ready"
                             android:layout_width="match_parent"
                             android:layout_height="100dp"
-                            android:background="@android:color/darker_gray" />
+                            android:scaleType="centerCrop"
+                            android:background="@drawable/bg_top_rounded"
+                            android:clipToOutline="true" />
 
                         <TextView
                             android:id="@+id/ready_title"

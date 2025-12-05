@@ -74,29 +74,45 @@ class ScheduleFragment : Fragment() {
         binding.recipeNameTextView.text = recipeName
 
         scheduleData.forEachIndexed { index, step ->
-            val textView = TextView(requireContext()).apply {
-                
-                val timeString = scheduleItems?.getOrNull(index)?.let { 
-                    SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date(it.whenMillis)) 
-                }
-                
-                text = if (!timeString.isNullOrEmpty()) "${step.stepName} - $timeString" else step.stepName
-                textSize = 16f
-                setOnClickListener {
-                    recipe?.let {
-                        val stepIndex = it.schedule.indexOf(step)
-                        if (stepIndex != -1) {
-                            val bundle = Bundle().apply {
-                                putInt("recipeId", it.id)
-                                putInt("stepIndex", stepIndex)
-                                putBoolean("isViewingOnly", true)
-                            }
-                            findNavController().navigate(R.id.action_scheduleFragment_to_recipeStepFragment, bundle)
+            val stepView = layoutInflater.inflate(R.layout.item_flowchart_step, binding.scheduleStepsLayout, false)
+            val nameText = stepView.findViewById<TextView>(R.id.step_name)
+            val timeText = stepView.findViewById<TextView>(R.id.step_time)
+            val durationText = stepView.findViewById<TextView>(R.id.step_duration)
+            val timelineLine = stepView.findViewById<View>(R.id.timeline_line)
+            val cardView = stepView.findViewById<androidx.cardview.widget.CardView>(R.id.step_card)
+
+            nameText.text = step.stepName
+
+            val item = scheduleItems?.getOrNull(index)
+            if (item != null) {
+                val timeString = SimpleDateFormat("HH:mm", Locale.US).format(Date(item.whenMillis))
+                val dateString = SimpleDateFormat("MMM dd", Locale.US).format(Date(item.whenMillis))
+                timeText.text = "$dateString, $timeString"
+                timeText.isVisible = true
+                durationText.isVisible = false
+            } else {
+                timeText.isVisible = false
+                durationText.isVisible = false
+            }
+
+            if (index == scheduleData.size - 1) {
+                timelineLine.visibility = View.INVISIBLE
+            }
+
+            cardView.setOnClickListener {
+                recipe?.let { r ->
+                    val stepIndex = r.schedule.indexOf(step)
+                    if (stepIndex != -1) {
+                        val bundle = Bundle().apply {
+                            putInt("recipeId", r.id)
+                            putInt("stepIndex", stepIndex)
+                            putBoolean("isViewingOnly", true)
                         }
+                        findNavController().navigate(R.id.action_scheduleFragment_to_recipeStepFragment, bundle)
                     }
                 }
             }
-            binding.scheduleStepsLayout.addView(textView)
+            binding.scheduleStepsLayout.addView(stepView)
         }
 
         val isViewingSchedule = scheduleName != null
@@ -136,44 +152,47 @@ class ScheduleFragment : Fragment() {
             var previousHoursBeforeReady = scheduleData.firstOrNull()?.hoursBeforeReady ?: 0.0
             
             scheduleData.forEachIndexed { index, step ->
-                val textView = TextView(requireContext()).apply {
-                    val durationHours = previousHoursBeforeReady - step.hoursBeforeReady
-                    val durationMinutes = (durationHours * 60).toInt()
-                    
-                    // For the first step, we don't have a "previous" step to calculate duration from in this simple model,
-                    // or we can assume it starts at 0. Let's just show the step name for the first one, 
-                    // or "Start" if it's the very first action.
-                    // Actually, hoursBeforeReady counts DOWN. 
-                    // So step 0 (24h) to step 1 (17h) is 7 hours.
-                    
-                    val durationText = if (index < scheduleData.size - 1) {
-                         val nextStep = scheduleData[index + 1]
-                         val diff = step.hoursBeforeReady - nextStep.hoursBeforeReady
-                         val mins = (diff * 60).toInt()
-                         if (mins >= 60) "~${mins/60}h ${mins%60}m" else "~${mins}min"
-                    } else {
-                        "Finish"
-                    }
+                val stepView = layoutInflater.inflate(R.layout.item_flowchart_step, binding.scheduleStepsLayout, false)
+                val nameText = stepView.findViewById<TextView>(R.id.step_name)
+                val timeText = stepView.findViewById<TextView>(R.id.step_time)
+                val durationText = stepView.findViewById<TextView>(R.id.step_duration)
+                val timelineLine = stepView.findViewById<View>(R.id.timeline_line)
+                val cardView = stepView.findViewById<androidx.cardview.widget.CardView>(R.id.step_card)
 
-                    text = "${step.stepName} ($durationText)"
-                    textSize = 16f
-                    setPadding(0, 8, 0, 8)
-                    
-                    setOnClickListener {
-                         recipe?.let {
-                            val stepIndex = it.schedule.indexOf(step)
-                            if (stepIndex != -1) {
-                                val bundle = Bundle().apply {
-                                    putInt("recipeId", it.id)
-                                    putInt("stepIndex", stepIndex)
-                                    putBoolean("isViewingOnly", true)
-                                }
-                                findNavController().navigate(R.id.action_scheduleFragment_to_recipeStepFragment, bundle)
+                nameText.text = step.stepName
+
+                // Calculate duration
+                val durationTextString = if (index < scheduleData.size - 1) {
+                     val nextStep = scheduleData[index + 1]
+                     val diff = step.hoursBeforeReady - nextStep.hoursBeforeReady
+                     val mins = (diff * 60).toInt()
+                     if (mins >= 60) "~${mins/60}h ${mins%60}m" else "~${mins}min"
+                } else {
+                    "Finish"
+                }
+                
+                timeText.text = durationTextString
+                timeText.isVisible = true
+                durationText.isVisible = false // Or use this for something else
+
+                if (index == scheduleData.size - 1) {
+                    timelineLine.visibility = View.INVISIBLE
+                }
+
+                cardView.setOnClickListener {
+                     recipe?.let {
+                        val stepIndex = it.schedule.indexOf(step)
+                        if (stepIndex != -1) {
+                            val bundle = Bundle().apply {
+                                putInt("recipeId", it.id)
+                                putInt("stepIndex", stepIndex)
+                                putBoolean("isViewingOnly", true)
                             }
+                            findNavController().navigate(R.id.action_scheduleFragment_to_recipeStepFragment, bundle)
                         }
                     }
                 }
-                binding.scheduleStepsLayout.addView(textView)
+                binding.scheduleStepsLayout.addView(stepView)
             }
 
         } else {
