@@ -16,7 +16,10 @@ data class StepNote(
 data class PastLoaf(
     val recipeName: String,
     val dateBaked: Date,
-    val notes: List<StepNote>
+    val notes: List<StepNote>,
+    val feedback: String? = null,
+    val finalPhotoUri: String? = null,
+    val overallConclusion: String? = null
 ) : Parcelable
 
 object CurrentBakeSession {

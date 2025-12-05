@@ -58,6 +58,9 @@ class ScheduleFragment : Fragment() {
         val scheduleItemsArray = arguments?.getParcelableArray("scheduleItems")
         val scheduleItems = scheduleItemsArray?.map { it as ScheduleItem }
 
+        // Determine the list of steps to show. 
+        // If we have scheduleItems (from Plan), map them to BakeSteps.
+        // If not, look for the "scheduleData" argument (from Explore/Saved/BakeNow).
         val scheduleData: List<BakeStep> = if (scheduleItems != null) {
             scheduleItems.map { it.bakeStep }
         } else {
@@ -97,7 +100,8 @@ class ScheduleFragment : Fragment() {
         }
 
         val isViewingSchedule = scheduleName != null
-        val isExploring = scheduleItems == null
+        // We are exploring if we don't have specific times calculated AND we aren't viewing a saved schedule
+        val isExploring = scheduleItems == null && !isBakeNowPreview
 
         if (isViewingSchedule) {
             // Viewing a saved schedule
@@ -125,11 +129,64 @@ class ScheduleFragment : Fragment() {
             // Exploring recipes (no times)
             binding.scheduleNameEditText.isVisible = false
             binding.saveScheduleButton.isVisible = false
+            
+            // Calculate durations and update text views
+            binding.scheduleStepsLayout.removeAllViews() // Clear previous views
+            
+            var previousHoursBeforeReady = scheduleData.firstOrNull()?.hoursBeforeReady ?: 0.0
+            
+            scheduleData.forEachIndexed { index, step ->
+                val textView = TextView(requireContext()).apply {
+                    val durationHours = previousHoursBeforeReady - step.hoursBeforeReady
+                    val durationMinutes = (durationHours * 60).toInt()
+                    
+                    // For the first step, we don't have a "previous" step to calculate duration from in this simple model,
+                    // or we can assume it starts at 0. Let's just show the step name for the first one, 
+                    // or "Start" if it's the very first action.
+                    // Actually, hoursBeforeReady counts DOWN. 
+                    // So step 0 (24h) to step 1 (17h) is 7 hours.
+                    
+                    val durationText = if (index < scheduleData.size - 1) {
+                         val nextStep = scheduleData[index + 1]
+                         val diff = step.hoursBeforeReady - nextStep.hoursBeforeReady
+                         val mins = (diff * 60).toInt()
+                         if (mins >= 60) "~${mins/60}h ${mins%60}m" else "~${mins}min"
+                    } else {
+                        "Finish"
+                    }
+
+                    text = "${step.stepName} ($durationText)"
+                    textSize = 16f
+                    setPadding(0, 8, 0, 8)
+                    
+                    setOnClickListener {
+                         recipe?.let {
+                            val stepIndex = it.schedule.indexOf(step)
+                            if (stepIndex != -1) {
+                                val bundle = Bundle().apply {
+                                    putInt("recipeId", it.id)
+                                    putInt("stepIndex", stepIndex)
+                                    putBoolean("isViewingOnly", true)
+                                }
+                                findNavController().navigate(R.id.action_scheduleFragment_to_recipeStepFragment, bundle)
+                            }
+                        }
+                    }
+                }
+                binding.scheduleStepsLayout.addView(textView)
+            }
+
         } else {
             // Creating a new schedule (we have times, but not a saved name yet)
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
             val defaultScheduleName = "$recipeName - ${sdf.format(Date())}"
             binding.scheduleNameEditText.setText(defaultScheduleName)
+            
+            // Show Export to Calendar button
+            binding.exportCalendarButton.isVisible = true
+            binding.exportCalendarButton.setOnClickListener {
+                exportToCalendar(recipeName, scheduleItems)
+            }
 
             binding.saveScheduleButton.setOnClickListener {
                 val newScheduleName = binding.scheduleNameEditText.text.toString()
@@ -189,6 +246,29 @@ class ScheduleFragment : Fragment() {
             NotificationScheduler.scheduleNotifications(requireContext(), it, recipeId, scheduleName)
             Toast.makeText(requireContext(), "Schedule saved and reminders set!", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_global_homeFragment)
+        }
+    }
+
+    private fun exportToCalendar(title: String, items: List<ScheduleItem>?) {
+        if (items == null) return
+        
+        val intent = Intent(Intent.ACTION_INSERT).apply {
+            data = android.provider.CalendarContract.Events.CONTENT_URI
+            putExtra(android.provider.CalendarContract.Events.TITLE, "Bake: $title")
+            putExtra(android.provider.CalendarContract.Events.DESCRIPTION, "Baking schedule for $title")
+            
+            // Set start time to the first step
+            if (items.isNotEmpty()) {
+                putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME, items.first().whenMillis)
+                // End time roughly 1 hour after start for the first event, or just mark it as the start
+                putExtra(android.provider.CalendarContract.EXTRA_EVENT_END_TIME, items.first().whenMillis + 3600000)
+            }
+        }
+        
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "No calendar app found", Toast.LENGTH_SHORT).show()
         }
     }
 

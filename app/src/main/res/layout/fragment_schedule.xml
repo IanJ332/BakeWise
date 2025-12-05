@@ -43,6 +43,15 @@
         android:text="Save Schedule" />
 
     <Button
+        android:id="@+id/export_calendar_button"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Export to Calendar"
+        android:visibility="gone" />
+
+    <Button
         android:id="@+id/start_baking_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

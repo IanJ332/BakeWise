@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bakewise.databinding.FragmentPastLoavesBinding
-import com.example.bakewise.databinding.DialogLoafDetailsBinding
 
 class PastLoavesFragment : Fragment() {
 
@@ -27,38 +25,22 @@ class PastLoavesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val loaves = PastLoavesRepository.loaves
+        val pastLoaves = PastLoavesRepository.loaves
 
-        if (loaves.isEmpty()) {
-            binding.emptyView.isVisible = true
-            binding.pastLoavesRecyclerView.isVisible = false
+        if (pastLoaves.isEmpty()) {
+            binding.emptyStateText.visibility = View.VISIBLE
+            binding.pastLoavesRecyclerView.visibility = View.GONE
         } else {
-            binding.emptyView.isVisible = false
-            binding.pastLoavesRecyclerView.isVisible = true
-            
+            binding.emptyStateText.visibility = View.GONE
+            binding.pastLoavesRecyclerView.visibility = View.VISIBLE
             binding.pastLoavesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-            binding.pastLoavesRecyclerView.adapter = PastLoavesAdapter(loaves) { loaf ->
-                showLoafDetails(loaf)
+            binding.pastLoavesRecyclerView.adapter = PastLoavesAdapter(pastLoaves) { loaf ->
+                val bundle = Bundle().apply {
+                    putParcelable("loaf", loaf)
+                }
+                findNavController().navigate(R.id.action_pastLoavesFragment_to_loafDetailsFragment, bundle)
             }
         }
-    }
-
-    private fun showLoafDetails(loaf: PastLoaf) {
-        val dialogBinding = DialogLoafDetailsBinding.inflate(layoutInflater)
-        
-        dialogBinding.detailTitleTextView.text = "${loaf.recipeName} Notes"
-        dialogBinding.detailsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        dialogBinding.detailsRecyclerView.adapter = LoafDetailsAdapter(loaf.notes)
-
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogBinding.root)
-            .create()
-
-        dialogBinding.closeButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 
     override fun onDestroyView() {

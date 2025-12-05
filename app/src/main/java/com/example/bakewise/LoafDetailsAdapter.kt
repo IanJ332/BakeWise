@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bakewise.databinding.ItemLoafNoteBinding
 
 class LoafDetailsAdapter(
-    private val notes: List<StepNote>
+    private val notes: List<StepNote>,
+    private val onItemClick: ((StepNote) -> Unit)? = null
 ) : RecyclerView.Adapter<LoafDetailsAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemLoafNoteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(note: StepNote) {
+            binding.root.setOnClickListener { onItemClick?.invoke(note) }
             binding.stepNameTextView.text = note.stepName
             binding.noteTextView.text = note.note
             

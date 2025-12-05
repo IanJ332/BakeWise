@@ -70,6 +70,17 @@ class StepWaitingFragment : Fragment() {
             askNotificationPermission()
         }
 
+        binding.seePlanButton.setOnClickListener {
+            if (recipe != null) {
+                val bundle = Bundle().apply {
+                    putString("recipeName", recipe.name)
+                    putParcelableArray("scheduleData", recipe.schedule.toTypedArray())
+                }
+                findNavController().navigate(R.id.action_stepWaitingFragment_to_scheduleFragment, bundle)
+            }
+        }
+
+        // Renamed from simulateTimesUpButton to continueButton to reflect manual progression
         binding.continueButton.setOnClickListener {
             val bundle = Bundle().apply {
                 putInt("recipeId", recipeId)
