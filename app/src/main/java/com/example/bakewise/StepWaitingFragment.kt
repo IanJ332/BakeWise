@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -45,6 +44,13 @@ class StepWaitingFragment : Fragment() {
         val stepIndex = arguments?.getInt("stepIndex") ?: -1
 
         val recipe = MOCK_RECIPES.find { it.id == recipeId }
+        val step = recipe?.schedule?.getOrNull(stepIndex)
+
+        if (step != null) {
+            binding.messageTextView.text = "Now resting after: ${step.stepName}.\n\nCheck back when the timer is up to evaluate the results and move to the next step."
+        } else {
+            binding.messageTextView.text = "Resting..."
+        }
 
         binding.bakingNavBar.navViewStepsButton.setOnClickListener {
             if (recipe != null) {
@@ -58,12 +64,6 @@ class StepWaitingFragment : Fragment() {
 
         binding.bakingNavBar.navBackButton.setOnClickListener {
             findNavController().popBackStack()
-        }
-
-        when (stepIndex) {
-            0 -> binding.messageTextView.text = "Great! Your dough is now resting. This first rest period is about 4 hours. Set a reminder!"
-            1 -> binding.messageTextView.text = "Perfect shape! Cover the dough and place it in the refrigerator for its long cold proof. This will be 8-12 hours. Set a reminder for tomorrow!"
-            2 -> binding.messageTextView.text = "Your bread is in the oven! This will take about 45 minutes total. The smell is going to be amazing. Set a final timer!"
         }
 
         binding.setRemindersButton.setOnClickListener {

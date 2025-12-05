@@ -72,11 +72,14 @@ class NewPickRecipeFragment : Fragment() {
                             // So:
                             // Ready Time = Now + Step[0].hoursBeforeReady
                             // Then for each step: Time = Ready Time - Step.hoursBeforeReady
-                            
-                            val firstStepHours = recipe.schedule.firstOrNull()?.hoursBeforeReady ?: 0
-                            val readyTimeMillis = currentTime + (firstStepHours * 60 * 60 * 1000L)
-                            
-                            val stepTime = readyTimeMillis - (step.hoursBeforeReady * 60 * 60 * 1000L)
+
+                            val firstStepHours = recipe.schedule.firstOrNull()?.hoursBeforeReady ?: 0.0
+                            // Convert the math to Long explicitly
+                            val readyTimeMillis = currentTime + (firstStepHours * 60 * 60 * 1000).toLong()
+
+                            // Do the same for the subtraction
+                            val stepTime = readyTimeMillis - (step.hoursBeforeReady * 60 * 60 * 1000).toLong()
+
                             ScheduleItem(stepTime, step)
                         }
                         
