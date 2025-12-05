@@ -146,7 +146,9 @@ class RecipeStepFragment : Fragment() {
     private fun saveCurrentNote(stepIndex: Int, stepName: String?) {
         val note = binding.noteInputEditText.text.toString()
         if (note.isNotBlank() && stepName != null) {
-            CurrentBakeSession.addNote(stepIndex, stepName, note, null)
+            val existingNote = CurrentBakeSession.stepNotes.find { it.stepIndex == stepIndex }
+            val existingImageUri = existingNote?.imageUri
+            CurrentBakeSession.addNote(stepIndex, stepName, note, existingImageUri)
         }
     }
 
