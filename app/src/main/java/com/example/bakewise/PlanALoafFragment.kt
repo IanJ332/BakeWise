@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class PlanALoafFragment : Fragment() {
 
@@ -89,7 +90,9 @@ class PlanALoafFragment : Fragment() {
             val calculatedSchedule = selectedRecipe!!.schedule.map {
                 val stepTime = Calendar.getInstance()
                 stepTime.time = readyDate
-                stepTime.add(Calendar.HOUR, -it.hoursBeforeReady)
+                // Using minutes for accuracy since hoursBeforeReady is a Double
+                val minutesBefore = (it.hoursBeforeReady * 60).roundToInt()
+                stepTime.add(Calendar.MINUTE, -minutesBefore)
                 ScheduleItem(stepTime.timeInMillis, it)
             }.sortedBy { it.whenMillis }
 
@@ -119,9 +122,11 @@ class PlanALoafFragment : Fragment() {
     }
 
     private fun showDateThenTime() {
-        val totalHours = selectedRecipe!!.schedule.maxOfOrNull { it.hoursBeforeReady } ?: 0
+        // Round up total hours to be safe for the DatePicker logic, or calculate minutes
+        val totalHours = selectedRecipe!!.schedule.maxOfOrNull { it.hoursBeforeReady } ?: 0.0
         val minReadyCal = Calendar.getInstance()
-        minReadyCal.add(Calendar.HOUR_OF_DAY, totalHours)
+        // Add total duration in minutes
+        minReadyCal.add(Calendar.MINUTE, (totalHours * 60).roundToInt())
 
         DatePickerDialog(
             requireContext(),
@@ -153,10 +158,6 @@ class PlanALoafFragment : Fragment() {
             readyCal.timeInMillis = minReadyCal.timeInMillis
         }
         
-        // We add a "Subtitle" or Title to the dialog to show the Start Time dynamically.
-        // Since TimePickerDialog doesn't natively support a dynamic subtitle easily without custom view,
-        // we will update the Title with the projected Start Time as the user scrolls.
-        
         val tpd = object : TimePickerDialog(requireContext(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar, { _, hourOfDay, minute ->
             readyCal.set(Calendar.HOUR_OF_DAY, hourOfDay)
             readyCal.set(Calendar.MINUTE, minute)
@@ -183,10 +184,8 @@ class PlanALoafFragment : Fragment() {
                 
                 if (tempCal.timeInMillis < minReadyCal.timeInMillis) {
                     updateTime(minReadyCal.get(Calendar.HOUR_OF_DAY), minReadyCal.get(Calendar.MINUTE))
-                    // If clamped, we update the title based on the clamped time
                     updateStartTimeTitle(this, minReadyCal)
                 } else {
-                    // If valid, update title based on user selection
                     updateStartTimeTitle(this, tempCal)
                 }
             }
@@ -194,18 +193,17 @@ class PlanALoafFragment : Fragment() {
         
         tpd.window?.setBackgroundDrawableResource(android.R.color.transparent)
         
-        // Set initial title
         updateStartTimeTitle(tpd, readyCal)
         
         tpd.show()
     }
     
     private fun updateStartTimeTitle(dialog: TimePickerDialog, readyTime: Calendar) {
-        // Calculate start time: Ready Time - Total Hours
-        val totalHours = selectedRecipe!!.schedule.maxOfOrNull { it.hoursBeforeReady } ?: 0
+        val totalHours = selectedRecipe!!.schedule.maxOfOrNull { it.hoursBeforeReady } ?: 0.0
         val startTime = Calendar.getInstance()
         startTime.timeInMillis = readyTime.timeInMillis
-        startTime.add(Calendar.HOUR_OF_DAY, -totalHours)
+        // Subtract total duration in minutes
+        startTime.add(Calendar.MINUTE, -(totalHours * 60).roundToInt())
         
         val startFmt = SimpleDateFormat("EEE HH:mm", Locale.US)
         dialog.setTitle("Start Baking at: ${startFmt.format(startTime.time)}")

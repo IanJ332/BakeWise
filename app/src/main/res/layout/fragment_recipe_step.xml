@@ -49,7 +49,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/note_input_edit_text"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="46dp"
                     android:gravity="top|start"
                     android:inputType="textMultiLine"
                     android:minLines="3" />
@@ -73,18 +73,27 @@
                 android:background="@android:color/darker_gray"
                 android:visibility="gone" />
 
-            <FrameLayout
+            <HorizontalScrollView
+                android:id="@+id/image_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="16dp"
-                android:background="@android:color/darker_gray">
+                android:visibility="gone">
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/image_container"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Video Placeholder" />
-            </FrameLayout>
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" />
+
+            </HorizontalScrollView>
+
+            <VideoView
+                android:id="@+id/video_view"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/done_button"
