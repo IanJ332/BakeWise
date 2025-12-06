@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="?android:attr/colorBackground"
     tools:context=".LoafDetailsFragment">
 
     <LinearLayout
@@ -17,9 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Classic Sourdough"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#333333"/>
+            style="@style/TitleText"
+            android:textSize="28sp" />
 
         <TextView
             android:id="@+id/detail_date_baked"
@@ -27,17 +28,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Baked on May 12, 2024"
+            style="@style/BodyText"
             android:textSize="14sp"
-            android:textColor="#666666"/>
+            android:textColor="?attr/colorOnSurfaceVariant"/>
 
         <!-- Overall Conclusion Section -->
         <androidx.cardview.widget.CardView
+            style="@style/CardStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#F0F4F8"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="?attr/colorSurface">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:text="Overall Conclusion"
                     android:textStyle="bold"
-                    android:textColor="#333333"/>
+                    android:textColor="?attr/colorPrimary"/>
 
                 <TextView
                     android:id="@+id/detail_conclusion_text"
@@ -58,6 +59,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Overall conclusion text goes here..."
+                    style="@style/BodyText"
                     android:lineSpacingMultiplier="1.2"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -67,14 +69,15 @@
             android:layout_height="1dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
-            android:background="#E0E0E0"/>
+            android:background="?attr/colorOutline"
+            android:alpha="0.2"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bake Diary"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            style="@style/TitleText"
+            android:textSize="20sp"
             android:layout_marginBottom="8dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -89,16 +92,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Final Loaf"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            style="@style/TitleText"
+            android:textSize="20sp"/>
 
         <ImageView
             android:id="@+id/detail_loaf_image"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:scaleType="centerCrop"
-            android:background="#E0E0E0"
+            android:background="?attr/colorSurfaceVariant"
             android:visibility="gone"/>
 
         <TextView
@@ -106,16 +109,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="#F5F5F5"
+            android:background="?attr/colorSurfaceVariant"
             android:padding="12dp"
             android:text="Final feedback..."
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:visibility="gone"/>
 
         <Button
             android:id="@+id/close_details_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:text="Close"
             style="?attr/materialButtonOutlinedStyle"/>
 

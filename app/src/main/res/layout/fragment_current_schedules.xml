@@ -4,19 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="24dp"
+    android:background="?android:attr/colorBackground"
     tools:context=".CurrentSchedulesFragment">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Current Schedules"
-        android:textSize="24sp" />
+        style="@style/TitleText"
+        android:textSize="28sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/schedules_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="24dp"
+        android:layoutAnimation="@anim/layout_animation_slide_bottom" />
 
 </LinearLayout>
