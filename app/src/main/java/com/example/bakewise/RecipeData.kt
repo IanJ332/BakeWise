@@ -27,7 +27,8 @@ data class Recipe(
     val totalTime: String,
     val activeTime: String,
     val ingredients: List<Ingredient>,
-    val schedule: List<BakeStep>
+    val schedule: List<BakeStep>,
+    val imageResId: Int = 0
 ) : Parcelable
 
 
@@ -40,6 +41,7 @@ val CLASSIC_SOURDOUGH_RECIPE = Recipe(
     name = "Classic Sourdough",
     totalTime = "24h",
     activeTime = "1.75h",
+    imageResId = R.drawable.bake_golden,
     ingredients = listOf(
         Ingredient("Active starter", "150g"),
         Ingredient("Water (lukewarm)", "300g"),
@@ -211,6 +213,7 @@ val SEEDED_SOURDOUGH_RECIPE = Recipe(
     name = "Seeded Sourdough",
     totalTime = "24h",
     activeTime = "1.3h",
+    imageResId = R.drawable.seeded_sourdough,
     ingredients = listOf(
         Ingredient("Active starter", "150g"),
         Ingredient("Water (lukewarm)", "320g"), // +20g for seed absorption
@@ -331,6 +334,7 @@ val SOURDOUGH_BAGUETTES_RECIPE = Recipe(
     name = "Sourdough Baguettes",
     totalTime = "18–24h",
     activeTime = "1.4h",
+    imageResId = R.drawable.baguettes,
     ingredients = listOf(
         Ingredient("Active starter", "150g"),
         Ingredient("Water (lukewarm)", "350g"), // higher hydration

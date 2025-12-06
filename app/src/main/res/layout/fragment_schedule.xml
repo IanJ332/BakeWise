@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="?android:attr/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +17,8 @@
             android:id="@+id/recipe_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
+            style="@style/TitleText"
+            android:textSize="28sp"
             tools:text="Classic Sourdough" />
 
         <TextView
@@ -24,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Your baking schedule:"
-            android:textSize="16sp" />
+            style="@style/BodyText" />
 
         <LinearLayout
             android:id="@+id/schedule_steps_layout"

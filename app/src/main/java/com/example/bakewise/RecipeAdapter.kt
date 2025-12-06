@@ -30,6 +30,7 @@ class RecipeAdapter(
         private val nameTextView: TextView = itemView.findViewById(R.id.recipe_name_text)
         private val timeTextView: TextView = itemView.findViewById(R.id.recipe_time_text)
         private val detailsButton: ImageButton = itemView.findViewById(R.id.details_arrow_button)
+        private val recipeImageView: android.widget.ImageView = itemView.findViewById(R.id.recipe_image)
 
         fun bind(recipe: Recipe) {
             nameTextView.text = recipe.name
@@ -37,6 +38,12 @@ class RecipeAdapter(
             // Display total time and active time
             val timeText = "${recipe.totalTime}\n(Active: ${recipe.activeTime})"
             timeTextView.text = timeText
+
+            if (recipe.imageResId != 0) {
+                recipeImageView.setImageResource(recipe.imageResId)
+            } else {
+                recipeImageView.setImageResource(android.R.color.transparent)
+            }
 
             itemView.setOnClickListener {
                 onItemClick(recipe, source)

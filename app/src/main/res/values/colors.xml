@@ -2,4 +2,41 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Artisan Bakery Palette -->
+    <color name="seed">#B07D62</color>
+    
+    <!-- Primary: Warm Cinnamon -->
+    <color name="md_theme_light_primary">#9C411E</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#FFDBD0</color>
+    <color name="md_theme_light_onPrimaryContainer">#3A0B00</color>
+
+    <!-- Secondary: Sage/Olive for contrast -->
+    <color name="md_theme_light_secondary">#77574E</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#FFDBD0</color>
+    <color name="md_theme_light_onSecondaryContainer">#2C150F</color>
+
+    <!-- Tertiary: Golden/Wheat -->
+    <color name="md_theme_light_tertiary">#6C5D2F</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#F6E1A6</color>
+    <color name="md_theme_light_onTertiaryContainer">#231B00</color>
+
+    <!-- Backgrounds -->
+    <color name="md_theme_light_background">#FFF8F6</color> <!-- Warm off-white -->
+    <color name="md_theme_light_onBackground">#201A19</color>
+    <color name="md_theme_light_surface">#FFF8F6</color>
+    <color name="md_theme_light_onSurface">#201A19</color>
+    
+    <!-- Surface Variants (Cards) -->
+    <color name="md_theme_light_surfaceVariant">#F5DED8</color>
+    <color name="md_theme_light_onSurfaceVariant">#53433F</color>
+    <color name="md_theme_light_outline">#85736E</color>
+    
+    <!-- Custom Colors -->
+    <color name="color_ready_green">#4CAF50</color>
+    <color name="color_not_ready_red">#E57373</color>
+    <color name="color_warm_accent">#FFAB91</color>
 </resources>

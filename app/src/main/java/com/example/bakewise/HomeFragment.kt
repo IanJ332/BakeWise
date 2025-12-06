@@ -27,30 +27,30 @@ class HomeFragment : Fragment() {
         // Cleanup expired schedules whenever we visit home, ensuring Past Loaves are up to date
         ScheduleRepository.cleanupExpiredSchedules()
 
-        binding.planALoafButton.setOnClickListener {
+        binding.planCard.setOnClickListener {
             // Corrected: This should go to the PlanALoafFragment, not the recipe list.
             findNavController().navigate(R.id.action_homeFragment_to_planALoafFragment)
         }
 
-        binding.bakeNowButton.setOnClickListener {
+        binding.bakeNowCard.setOnClickListener {
              val bundle = Bundle().apply {
                 putString("source", "BakeNow")
             }
             findNavController().navigate(R.id.action_homeFragment_to_newPickRecipeFragment, bundle)
         }
 
-        binding.currentSchedulesButton.setOnClickListener {
+        binding.schedulesCard.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_currentSchedulesFragment)
         }
 
-        binding.exploreRecipesButton.setOnClickListener {
+        binding.exploreCard.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("source", "ExploreRecipes")
             }
             findNavController().navigate(R.id.action_homeFragment_to_newPickRecipeFragment, bundle)
         }
 
-        binding.pastLoafsButton.setOnClickListener {
+        binding.historyCard.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_pastLoavesFragment)
         }
     }

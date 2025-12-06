@@ -4,20 +4,26 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:background="?attr/colorSurface"
+    android:elevation="16dp">
 
     <ImageButton
         android:id="@+id/nav_back_button"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_weight="1"
-        android:src="@android:drawable/ic_menu_revert" />
+        android:src="@android:drawable/ic_menu_revert"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:tint="?attr/colorPrimary"/>
 
     <ImageButton
         android:id="@+id/nav_view_steps_button"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_weight="1"
-        android:src="@android:drawable/ic_menu_agenda" />
+        android:src="@android:drawable/ic_menu_agenda"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:tint="?attr/colorPrimary"/>
 
 </LinearLayout>

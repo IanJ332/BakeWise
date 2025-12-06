@@ -66,11 +66,8 @@ class FeedbackFragment : Fragment() {
         }
 
         binding.bakingNavBar.navBackButton.setOnClickListener {
-            val bundle = Bundle().apply {
-                putInt("recipeId", recipeId)
-                putInt("stepIndex", stepIndex)
-            }
-            findNavController().navigate(R.id.action_feedbackFragment_to_stepWaitingFragment, bundle)
+            // Go back to the step description, skipping the waiting screen
+            findNavController().popBackStack(R.id.recipeStepFragment, false)
         }
         var notReadyResId = 0
         var readyResId = 0
