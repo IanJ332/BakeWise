@@ -25,6 +25,11 @@ class FeedbackFragment : Fragment() {
     private var currentPhotoUri: Uri? = null
     private var currentFeedback: String? = null
 
+    // Demo Data
+    data class DemoScenario(val imageResId: Int, val feedback: String, val label: String)
+
+    private var mockFeedbackText: String? = null
+
     private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
         if (success && currentPhotoUri != null) {
             displayPhotoAndAnalyze(currentPhotoUri!!)
@@ -188,7 +193,13 @@ class FeedbackFragment : Fragment() {
         }
 
         binding.selectGalleryButton.setOnClickListener {
-            selectGalleryLauncher.launch("image/*")
+            val scenarios = getDemoScenarios(stepIndex)
+            if (scenarios.isNotEmpty()) {
+                showDemoGallery(scenarios)
+            } else {
+                // Fallback to system gallery if no demo scenarios for this step
+                selectGalleryLauncher.launch("image/*")
+            }
         }
 
         binding.addToNotesButton.setOnClickListener {
@@ -228,10 +239,85 @@ class FeedbackFragment : Fragment() {
         }
     }
 
+    private fun getDemoScenarios(stepIndex: Int): List<DemoScenario> {
+        return when (stepIndex) {
+            0 -> listOf( // Feed Starter
+                DemoScenario(R.drawable.starter_ready, "Excellent! Your starter is active, bubbly, and has doubled in size. It's ready to use.", "Ready"),
+                DemoScenario(R.drawable.starter_not_ready, "The starter looks inactive. It hasn't risen enough and lacks bubbles. Feed it again and wait 4-6 hours.", "Not Ready")
+            )
+            1 -> listOf( // Autolyse
+                DemoScenario(R.drawable.autolyse_ready, "Perfect. No dry flour visible. The dough is a shaggy, sticky mass but is fully hydrated.", "Ready"),
+                DemoScenario(R.drawable.autolyse_dry, "I see dry flour patches. The dough looks stiff. Add a splash of water and mix until fully incorporated.", "Dry")
+            )
+            4 -> listOf( // Bulk Fermentation
+                DemoScenario(R.drawable.bulk_ready, "Great progress. The dough has grown 30-50% in volume and looks puffy. It's ready for shaping.", "Ready"),
+                DemoScenario(R.drawable.bulk_not_ready, "The dough looks dense and hasn't risen much. It needs more time to ferment. Check back in 30-60 mins.", "Under")
+            )
+            6 -> listOf( // Final Shape
+                DemoScenario(R.drawable.shape_smooth, "Beautiful tension! The skin is smooth and taut. It will hold its shape well during proofing.", "Good"),
+                DemoScenario(R.drawable.shape_tearing, "The surface is tearing. You might be shaping too tightly or the gluten is weak. Let it rest.", "Tearing")
+            )
+            7 -> listOf( // Cold Proof
+                DemoScenario(R.drawable.poke_ready, "Perfect proofing! The dough springs back slowly, leaving a small indentation. Ready to bake.", "Ready"),
+                DemoScenario(R.drawable.poke_underproofed, "Underproofed. The dough springs back too quickly. Let it rest for another 30-60 minutes.", "Under")
+            )
+            10 -> listOf( // Bake
+                DemoScenario(R.drawable.bake_golden, "That looks amazing! Deep golden brown crust with a nice ear. It sounds hollow, right? Enjoy!", "Perfect"),
+                DemoScenario(R.drawable.bake_pale, "It looks a bit pale. The crust might be soft. Bake for another 5-10 minutes for more flavor and crunch.", "Pale")
+            )
+            else -> emptyList()
+        }
+    }
+
+    private fun showDemoGallery(scenarios: List<DemoScenario>) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_demo_gallery, null)
+        val container = dialogView.findViewById<android.widget.LinearLayout>(R.id.demo_gallery_container)
+
+        val dialog = android.app.AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        for (scenario in scenarios) {
+            val imageView = android.widget.ImageView(requireContext())
+            val params = android.widget.LinearLayout.LayoutParams(300, 300)
+            params.setMargins(16, 0, 16, 0)
+            imageView.layoutParams = params
+            imageView.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+            imageView.setImageResource(scenario.imageResId)
+            imageView.background = androidx.core.content.ContextCompat.getDrawable(requireContext(), R.drawable.bg_top_rounded) // Just for some rounding if available, or plain
+            imageView.clipToOutline = true
+            
+            imageView.setOnClickListener {
+                displayPhotoAndAnalyze(scenario.imageResId, scenario.feedback)
+                dialog.dismiss()
+            }
+            
+            container.addView(imageView)
+        }
+
+        dialog.show()
+    }
+
+    private fun displayPhotoAndAnalyze(imageResId: Int, feedback: String) {
+        binding.userStepPhoto.setImageResource(imageResId)
+        binding.userStepPhoto.isVisible = true
+        binding.takePhotoButton.text = "Retake Photo"
+        
+        // Store the feedback to be used after "analysis"
+        mockFeedbackText = feedback
+        
+        startAnalysisSimulation()
+    }
+
     private fun displayPhotoAndAnalyze(uri: Uri) {
         binding.userStepPhoto.setImageURI(uri)
         binding.userStepPhoto.isVisible = true
         binding.takePhotoButton.text = "Retake Photo"
+        
+        // Random fallback if using real camera
+        mockFeedbackText = generateMockFeedback()
+        
         startAnalysisSimulation()
     }
 
@@ -253,7 +339,7 @@ class FeedbackFragment : Fragment() {
                 binding.addToNotesButton.isEnabled = true
                 binding.addToNotesButton.text = "Add to Diary"
                 
-                val feedback = generateMockFeedback()
+                val feedback = mockFeedbackText ?: generateMockFeedback()
                 currentFeedback = feedback
                 binding.aiFeedbackText.text = feedback
             }
